@@ -1,7 +1,6 @@
 import {View} from 'react-native';
 import {Muted} from '@/components/base/text';
-import {Label} from '@/components/ui/Label';
-import {Switch} from '@/components/ui/Switch';
+import {Label, Switch} from '@workspace/ui';
 import type {HashAlgo} from '@/lib/access';
 
 type Props = {

@@ -3,7 +3,7 @@ import '@/global.css';
 import {useEffect, useState} from 'react';
 import {Platform} from 'react-native';
 import {Slot} from 'expo-router';
-import {HeroUINativeProvider} from 'heroui-native';
+import {UiProvider} from '@workspace/ui';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   useFonts,
@@ -57,9 +57,9 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <HeroUINativeProvider config={{devInfo: {stylingPrinciples: false}}}>
+      <UiProvider>
         <Slot />
-      </HeroUINativeProvider>
+      </UiProvider>
     </GestureHandlerRootView>
   );
 }

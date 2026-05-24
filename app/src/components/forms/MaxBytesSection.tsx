@@ -1,4 +1,4 @@
-import {NumberField} from '@/components/ui/NumberField';
+import {Label, NumberField} from '@workspace/ui';
 
 type Props = {
   label?: string;
@@ -14,12 +14,13 @@ export function MaxBytesSection({
   minValue = 1,
 }: Props) {
   return (
-    <NumberField
-      label={label}
-      value={valueMb}
-      minValue={minValue}
-      placeholder="Unlimited"
-      onChange={onChangeMb}
-    />
+    <NumberField value={valueMb} minValue={minValue} onChange={onChangeMb}>
+      <Label>{label}</Label>
+      <NumberField.Group>
+        <NumberField.DecrementButton />
+        <NumberField.Input placeholder="Unlimited" />
+        <NumberField.IncrementButton />
+      </NumberField.Group>
+    </NumberField>
   );
 }

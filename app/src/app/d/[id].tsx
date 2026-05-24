@@ -1,10 +1,9 @@
 import {useEffect, useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {Platform, ScrollView, View} from 'react-native';
 import {useLocalSearchParams} from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import {Title, Body, Muted, Small} from '@/components/base/text';
-import {Button} from '@/components/ui/Button';
-import {TextField} from '@/components/ui/TextField';
+import {Button, Input, Label, TextField} from '@workspace/ui';
 import {createSignedDownload, getDropForRecipient} from '@/lib/db/remote';
 import type {RecipientDrop} from '@/lib/supabase';
 import {formatBytes} from '@/lib/pickers';
@@ -56,21 +55,39 @@ export default function RecipientDropScreen() {
           <Muted>Enter credentials if required, then download files.</Muted>
         </View>
 
-        <TextField
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholder="If required"
-        />
-
-        <TextField
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          placeholder="If required"
-        />
+        {Platform.OS === 'web' ? (
+          <>
+            <TextField className="w-full" value={password} onChange={setPassword}>
+              <Label>Password</Label>
+              <Input placeholder="If required" type="password" />
+            </TextField>
+            <TextField className="w-full" value={email} onChange={setEmail}>
+              <Label>Email</Label>
+              <Input placeholder="If required" autoCapitalize="none" />
+            </TextField>
+          </>
+        ) : (
+          <>
+            <TextField>
+              <Label>Password</Label>
+              <Input
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                placeholder="If required"
+              />
+            </TextField>
+            <TextField>
+              <Label>Email</Label>
+              <Input
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                placeholder="If required"
+              />
+            </TextField>
+          </>
+        )}
 
         <Button onPress={loadDrop} isDisabled={loading}>
           {loading ? 'Checking…' : 'Unlock drop'}

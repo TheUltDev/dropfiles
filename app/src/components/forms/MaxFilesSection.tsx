@@ -1,4 +1,4 @@
-import {NumberField} from '@/components/ui/NumberField';
+import {Label, NumberField} from '@workspace/ui';
 
 type Props = {
   label?: string;
@@ -17,11 +17,16 @@ export function MaxFilesSection({
 }: Props) {
   return (
     <NumberField
-      label={label}
       value={value}
       minValue={minValue}
       maxValue={maxValue}
-      onChange={(next) => onChange(next ?? minValue)}
-    />
+      onChange={(next) => onChange(next ?? minValue)}>
+      <Label>{label}</Label>
+      <NumberField.Group>
+        <NumberField.DecrementButton />
+        <NumberField.Input />
+        <NumberField.IncrementButton />
+      </NumberField.Group>
+    </NumberField>
   );
 }

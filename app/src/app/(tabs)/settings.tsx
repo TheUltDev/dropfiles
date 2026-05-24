@@ -8,9 +8,7 @@ import {AllowedMimeSection} from '@/components/forms/AllowedMimeSection';
 import {ExpirationSection} from '@/components/forms/ExpirationSection';
 import {HashAlgoSection} from '@/components/forms/HashAlgoSection';
 import {MaxFilesSection} from '@/components/forms/MaxFilesSection';
-import {Button} from '@/components/ui/Button';
-import {Label} from '@/components/ui/Label';
-import {Switch} from '@/components/ui/Switch';
+import {Button, Label, Switch} from '@workspace/ui';
 import {
   DEFAULT_SETTINGS,
   loadSettings,

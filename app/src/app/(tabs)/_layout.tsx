@@ -1,5 +1,5 @@
 import {NativeTabs} from 'expo-router/unstable-native-tabs';
-import {useThemeColor} from 'heroui-native';
+import {useThemeColor} from '@workspace/ui';
 
 export default function TabsLayout() {
   const [foreground, background, surfaceSecondary] = useThemeColor([

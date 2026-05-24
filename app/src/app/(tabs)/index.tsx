@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {useRouter, type Href} from 'expo-router';
-import {Button} from '@/components/ui/Button';
+import {Button} from '@workspace/ui';
 import {Title, Subtitle, Body, Muted, Small} from '@/components/base/text';
 import {useActiveUploads} from '@/lib/storage/store';
 import {formatBytes} from '@/lib/pickers';

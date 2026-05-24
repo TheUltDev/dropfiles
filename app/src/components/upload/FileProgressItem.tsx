@@ -1,5 +1,5 @@
 import {View} from 'react-native';
-import {Button} from '@/components/ui/Button';
+import {Button} from '@workspace/ui';
 import {Body, Muted, Small} from '@/components/base/text';
 import {formatBytes} from '@/lib/pickers';
 import type {LocalUpload} from '@/lib/db/local.types';

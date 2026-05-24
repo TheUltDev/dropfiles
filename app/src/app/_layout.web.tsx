@@ -1,9 +1,9 @@
 import '../../crypto';
 import '@/global.css';
-import '@heroui/styles/css';
 import {useEffect, useState} from 'react';
 import {Platform} from 'react-native';
 import {Slot} from 'expo-router';
+import {UiProvider} from '@workspace/ui';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   useFonts,
@@ -57,7 +57,9 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <Slot />
+      <UiProvider>
+        <Slot />
+      </UiProvider>
     </GestureHandlerRootView>
   );
 }

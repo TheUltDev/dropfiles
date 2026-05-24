@@ -1,7 +1,6 @@
 import {View} from 'react-native';
 import {Muted} from '@/components/base/text';
-import {Button} from '@/components/ui/Button';
-import {DateTimeField} from '@/components/ui/DateTimeField';
+import {Button, DateTimeField} from '@workspace/ui';
 import {defaultExpirationAt} from '@/lib/expiration';
 
 type Props = {

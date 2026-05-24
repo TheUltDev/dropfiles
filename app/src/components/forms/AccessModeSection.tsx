@@ -1,8 +1,14 @@
+import {Platform} from 'react-native';
 import type {AccessMode} from '@/lib/access';
 import {ACCESS_MODE_LABELS, parseEmailList} from '@/lib/access';
-import {Select} from '@/components/ui/Select';
-import {TextField} from '@/components/ui/TextField';
-import type {SelectOption} from '@/components/ui/types';
+import {
+  Description,
+  Input,
+  Label,
+  Select,
+  TextField,
+  type SelectOption,
+} from '@workspace/ui';
 
 type Props = {
   label?: string;
@@ -21,6 +27,54 @@ const accessOptions: SelectOption<AccessMode>[] = (
   label: ACCESS_MODE_LABELS[mode],
 }));
 
+function ControlledTextField({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  helperText,
+  secureTextEntry,
+  autoCapitalize,
+}: {
+  label: string;
+  value: string;
+  onChangeText: (value: string) => void;
+  placeholder?: string;
+  helperText?: string;
+  secureTextEntry?: boolean;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+}) {
+  if (Platform.OS === 'web') {
+    return (
+      <TextField className="w-full" value={value} onChange={onChangeText}>
+        <Label>{label}</Label>
+        <Input
+          placeholder={placeholder}
+          type={secureTextEntry ? 'password' : 'text'}
+          autoCapitalize={autoCapitalize}
+        />
+        {helperText ? <Description>{helperText}</Description> : null}
+      </TextField>
+    );
+  }
+
+  return (
+    <>
+      <TextField>
+        <Label>{label}</Label>
+        <Input
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          secureTextEntry={secureTextEntry}
+          autoCapitalize={autoCapitalize}
+        />
+      </TextField>
+      {helperText ? <Description>{helperText}</Description> : null}
+    </>
+  );
+}
+
 export function AccessModeSection({
   label = 'Access',
   accessMode,
@@ -32,16 +86,21 @@ export function AccessModeSection({
 }: Props) {
   return (
     <>
-      <Select
-        label={label}
-        value={accessMode}
-        options={accessOptions}
-        placeholder="Choose access mode"
-        onChange={onAccessModeChange}
-      />
+      <Select className="w-full gap-2" value={accessMode} onChange={(mode) => onAccessModeChange(mode as AccessMode)}>
+        <Label>{label}</Label>
+        <Select.Trigger>
+          <Select.Value placeholder="Choose access mode" />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          {accessOptions.map((option) => (
+            <Select.Item key={option.value} value={option.value} label={option.label} />
+          ))}
+        </Select.Popover>
+      </Select>
 
       {accessMode === 'password' ? (
-        <TextField
+        <ControlledTextField
           label="Password"
           value={password ?? ''}
           onChangeText={onPasswordChange}
@@ -51,7 +110,7 @@ export function AccessModeSection({
       ) : null}
 
       {accessMode === 'email' ? (
-        <TextField
+        <ControlledTextField
           label="Allowed emails"
           value={allowedEmails.join(', ')}
           onChangeText={(text) => onAllowedEmailsChange(parseEmailList(text))}
