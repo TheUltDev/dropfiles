@@ -1,0 +1,5 @@
+# React Native / Expo native builds on Windows hit MAX_PATH with Bun's default
+# isolated linker (workspaces use symlinks into node_modules/.bun/<pkg>@<ver>/...).
+# Force the traditional flat hoisted layout to keep paths short.
+[install]
+linker = "hoisted"

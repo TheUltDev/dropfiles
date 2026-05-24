@@ -11,8 +11,28 @@
     "turbo": "^2.8.17",
     "typescript": "catalog:"
   },
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "bun@1.3.3",
   "engines": {
     "node": ">=20"
+  },
+  "trustedDependencies": [
+    "heroui-native-pro",
+    "@zowe/secrets-for-zowe-sdk"
+  ],
+  "workspaces": {
+    "packages": [
+      "app",
+      "pkg/*"
+    ],
+    "catalog": {
+      "@types/node": "^24.10.1",
+      "@types/react": "^19.2.5",
+      "@types/react-dom": "^19.2.3",
+      "lucide-react": "^1.0.1",
+      "oxlint": "^1.57.0",
+      "react": "^19.2.0",
+      "react-dom": "^19.2.0",
+      "typescript": "~5.9.3"
+    }
   }
 }
