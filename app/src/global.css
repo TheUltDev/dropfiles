@@ -1,0 +1,150 @@
+@import 'tailwindcss';
+@import 'uniwind';
+@import 'heroui-native/styles';
+
+@source '../node_modules/heroui-native/lib';
+
+/* ------------------------------------------------------------------ */
+/* Theme tokens shared with @workspace/ui (packages/ui/src/theme.css) */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  --radius: 0.625rem;
+
+  --font-normal: 'Geist_400Regular';
+  --font-medium: 'Geist_500Medium';
+  --font-semibold: 'Geist_600SemiBold';
+
+  --font-sans: 'Geist_400Regular';
+  --font-mono:
+    'Menlo', 'Courier New', monospace;
+}
+
+/* Geist is shipped as one TTF per weight, so each Tailwind font-weight
+   utility must also swap fontFamily to the matching variant. */
+@utility font-normal {
+  font-family: 'Geist_400Regular';
+  font-weight: 400;
+}
+@utility font-medium {
+  font-family: 'Geist_500Medium';
+  font-weight: 500;
+}
+@utility font-semibold {
+  font-family: 'Geist_600SemiBold';
+  font-weight: 600;
+}
+@utility font-bold {
+  font-family: 'Geist_700Bold';
+  font-weight: 700;
+}
+
+@layer theme {
+  :root {
+    @variant light {
+      --background: oklch(1 0 0);
+      --foreground: oklch(0.141 0.005 285.823);
+
+      --surface: oklch(1 0 0);
+      --surface-foreground: oklch(0.141 0.005 285.823);
+      --surface-secondary: oklch(0.967 0.001 286.375);
+      --surface-secondary-foreground: oklch(0.21 0.006 285.885);
+      --surface-tertiary: oklch(0.94 0.001 286.375);
+      --surface-tertiary-foreground: oklch(0.21 0.006 285.885);
+
+      --overlay: oklch(1 0 0);
+      --overlay-foreground: oklch(0.141 0.005 285.823);
+      --backdrop: oklch(0% 0 0 / 40%);
+
+      --muted: oklch(0.552 0.016 285.938);
+
+      --default: oklch(0.967 0.001 286.375);
+      --default-foreground: oklch(0.21 0.006 285.885);
+
+      --accent: oklch(0.488 0.243 264.376);
+      --accent-foreground: oklch(0.97 0.014 254.604);
+
+      --field-background: oklch(1 0 0);
+      --field-foreground: oklch(0.141 0.005 285.823);
+      --field-placeholder: oklch(0.552 0.016 285.938);
+      --field-border: oklch(0.92 0.004 286.32);
+
+      --success: oklch(0.7329 0.1935 150.81);
+      --success-foreground: oklch(0.141 0.005 285.823);
+
+      --warning: oklch(0.7819 0.1585 72.33);
+      --warning-foreground: oklch(0.141 0.005 285.823);
+
+      --danger: oklch(0.577 0.245 27.325);
+      --danger-foreground: oklch(0.97 0.014 254.604);
+
+      --segment: oklch(1 0 0);
+      --segment-foreground: oklch(0.21 0.006 285.885);
+
+      --border: oklch(0.92 0.004 286.32);
+      --separator: oklch(0.92 0.004 286.32);
+      --focus: oklch(0.705 0.015 286.067);
+      --link: oklch(0.488 0.243 264.376);
+
+      --surface-shadow:
+        0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
+        0 0 1px 0 rgba(0, 0, 0, 0.06);
+      --overlay-shadow:
+        0 2px 8px 0 rgba(0, 0, 0, 0.02), 0 -6px 12px 0 rgba(0, 0, 0, 0.01),
+        0 14px 28px 0 rgba(0, 0, 0, 0.03);
+      --field-shadow:
+        0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.06),
+        0 0 1px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    @variant dark {
+      --background: oklch(0.141 0.005 285.823);
+      --foreground: oklch(0.985 0 0);
+
+      --surface: oklch(0.21 0.006 285.885);
+      --surface-foreground: oklch(0.985 0 0);
+      --surface-secondary: oklch(0.257 0.006 286.033);
+      --surface-secondary-foreground: oklch(0.985 0 0);
+      --surface-tertiary: oklch(0.274 0.006 286.033);
+      --surface-tertiary-foreground: oklch(0.985 0 0);
+
+      --overlay: oklch(0.21 0.006 285.885);
+      --overlay-foreground: oklch(0.985 0 0);
+      --backdrop: oklch(0% 0 0 / 60%);
+
+      --muted: oklch(0.705 0.015 286.067);
+
+      --default: oklch(0.274 0.006 286.033);
+      --default-foreground: oklch(0.985 0 0);
+
+      --accent: oklch(0.424 0.199 265.638);
+      --accent-foreground: oklch(0.97 0.014 254.604);
+
+      --field-background: oklch(0.21 0.006 285.885);
+      --field-foreground: oklch(0.985 0 0);
+      --field-placeholder: oklch(0.705 0.015 286.067);
+      --field-border: oklch(1 0 0 / 15%);
+
+      --success: oklch(0.7329 0.1935 150.81);
+      --success-foreground: oklch(0.141 0.005 285.823);
+
+      --warning: oklch(0.8203 0.1388 76.34);
+      --warning-foreground: oklch(0.141 0.005 285.823);
+
+      --danger: oklch(0.704 0.191 22.216);
+      --danger-foreground: oklch(0.985 0 0);
+
+      --segment: oklch(0.3964 0.01 285.93);
+      --segment-foreground: oklch(0.985 0 0);
+
+      --border: oklch(1 0 0 / 10%);
+      --separator: oklch(1 0 0 / 10%);
+      --focus: oklch(0.552 0.016 285.938);
+      --link: oklch(0.623 0.214 259.815);
+
+      --surface-shadow: 0 0 0 0 transparent inset;
+      --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+      --field-shadow: 0 0 0 0 transparent inset;
+    }
+  }
+}
