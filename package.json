@@ -1,5 +1,5 @@
 {
-  "name": "midwest",
+  "name": "dropfiles",
   "private": true,
   "scripts": {
     "build": "turbo build",
