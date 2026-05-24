@@ -20,6 +20,8 @@
   --font-sans: 'Geist_400Regular';
   --font-mono:
     'Menlo', 'Courier New', monospace;
+
+  --color-danger: oklch(0.577 0.245 27.325);
 }
 
 /* Geist is shipped as one TTF per weight, so each Tailwind font-weight
