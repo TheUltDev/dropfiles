@@ -1,6 +1,5 @@
 import type {AccessMode} from '@/lib/access';
 import {ACCESS_MODE_LABELS, parseEmailList} from '@/lib/access';
-import {Muted} from '@/components/base/text';
 import {Select} from '@/components/ui/Select';
 import {TextField} from '@/components/ui/TextField';
 import type {SelectOption} from '@/components/ui/types';
@@ -40,7 +39,6 @@ export function AccessModeSection({
         placeholder="Choose access mode"
         onChange={onAccessModeChange}
       />
-      <Muted>{ACCESS_MODE_LABELS[accessMode]}</Muted>
 
       {accessMode === 'password' ? (
         <TextField

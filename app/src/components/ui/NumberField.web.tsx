@@ -1,3 +1,5 @@
+'use client';
+
 import {Label as WebLabel, NumberField as WebNumberField} from '@heroui/react';
 import type {UiNumberFieldProps} from '@/components/ui/types';
 

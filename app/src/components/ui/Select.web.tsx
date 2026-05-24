@@ -1,3 +1,5 @@
+'use client';
+
 import {Label as WebLabel, ListBox, Select as WebSelect} from '@heroui/react';
 import type {UiSelectProps} from '@/components/ui/types';
 

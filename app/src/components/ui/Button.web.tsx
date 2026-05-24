@@ -1,3 +1,5 @@
+'use client';
+
 import {Button as WebButton} from '@heroui/react';
 import type {UiButtonProps} from '@/components/ui/types';
 

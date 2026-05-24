@@ -1,3 +1,5 @@
+'use client';
+
 import {Description, Input, Label as WebLabel, TextField as WebTextField} from '@heroui/react';
 import type {UiTextFieldProps} from '@/components/ui/types';
 

@@ -1,5 +1,7 @@
+'use client';
+
 import {useEffect, useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {Platform, ScrollView, View} from 'react-native';
 import {Title, Body, Muted} from '@/components/base/text';
 import {AccessModeSection} from '@/components/forms/AccessModeSection';
 import {AllowedMimeSection} from '@/components/forms/AllowedMimeSection';
@@ -19,14 +21,21 @@ import type {AccessMode, HashAlgo} from '@/lib/access';
 import {resetOwnerToken} from '@/lib/identity';
 
 export default function SettingsScreen() {
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    void loadSettings().then(setSettings);
+    let cancelled = false;
+    void loadSettings().then((loaded) => {
+      if (!cancelled) setSettings(loaded);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function handleSave() {
+    if (!settings) return;
     await saveSettings(settings);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -34,6 +43,14 @@ export default function SettingsScreen() {
 
   async function handleResetIdentity() {
     await resetOwnerToken();
+  }
+
+  if (settings == null) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background">
+        <Muted>Loading settings…</Muted>
+      </View>
+    );
   }
 
   return (
@@ -53,7 +70,7 @@ export default function SettingsScreen() {
             password={undefined}
             allowedEmails={[]}
             onAccessModeChange={(defaultAccessMode: AccessMode) =>
-              setSettings((current) => ({...current, defaultAccessMode}))
+              setSettings((current) => (current ? {...current, defaultAccessMode} : current))
             }
             onPasswordChange={() => undefined}
             onAllowedEmailsChange={() => undefined}
@@ -64,7 +81,7 @@ export default function SettingsScreen() {
           label="Default expiration"
           value={settings.defaultExpirationAt}
           onChange={(defaultExpirationAt) =>
-            setSettings((current) => ({...current, defaultExpirationAt}))
+            setSettings((current) => (current ? {...current, defaultExpirationAt} : current))
           }
         />
 
@@ -72,7 +89,7 @@ export default function SettingsScreen() {
           label="Default max files"
           value={settings.defaultMaxFiles}
           onChange={(defaultMaxFiles) =>
-            setSettings((current) => ({...current, defaultMaxFiles}))
+            setSettings((current) => (current ? {...current, defaultMaxFiles} : current))
           }
         />
 
@@ -81,27 +98,33 @@ export default function SettingsScreen() {
           description="Hash files by default on new drops"
           value={settings.defaultHashAlgo}
           onChange={(defaultHashAlgo: HashAlgo) =>
-            setSettings((current) => ({...current, defaultHashAlgo}))
+            setSettings((current) => (current ? {...current, defaultHashAlgo} : current))
           }
         />
 
-        <View className="flex-row items-center justify-between rounded-2xl bg-surface-secondary px-4 py-3">
-          <View className="flex-1 pr-4">
-            <Label>Wi‑Fi only uploads</Label>
-            <Muted>Pause uploads when not on Wi‑Fi</Muted>
+        {Platform.OS !== 'web' ? (
+          <View className="flex-row items-center justify-between rounded-2xl bg-surface-secondary px-4 py-3">
+            <View className="flex-1 pr-4">
+              <Label>Wi‑Fi only uploads</Label>
+              <Muted>Pause uploads when not on Wi‑Fi</Muted>
+            </View>
+            <Switch
+              isSelected={settings.wifiOnly}
+              aria-label="Wi-Fi only uploads"
+              onSelectedChange={(wifiOnly) =>
+                setSettings((current) => (current ? {...current, wifiOnly} : current))
+              }
+            />
           </View>
-          <Switch
-            isSelected={settings.wifiOnly}
-            aria-label="Wi-Fi only uploads"
-            onSelectedChange={(wifiOnly) => setSettings((current) => ({...current, wifiOnly}))}
-          />
-        </View>
+        ) : null}
 
         <AllowedMimeSection
           label="Allowed MIME (comma-separated)"
           value={settings.allowedMime}
           placeholder="Empty = all types"
-          onChange={(allowedMime) => setSettings((current) => ({...current, allowedMime}))}
+          onChange={(allowedMime) =>
+            setSettings((current) => (current ? {...current, allowedMime} : current))
+          }
         />
 
         <Button onPress={handleSave}>{saved ? 'Saved' : 'Save settings'}</Button>

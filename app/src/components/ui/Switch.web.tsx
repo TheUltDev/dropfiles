@@ -1,3 +1,5 @@
+'use client';
+
 import {Switch as WebSwitch} from '@heroui/react';
 import type {UiSwitchProps} from '@/components/ui/types';
 

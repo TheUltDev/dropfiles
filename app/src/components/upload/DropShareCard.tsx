@@ -1,8 +1,8 @@
-import {useMemo} from 'react';
 import {View} from 'react-native';
-import Svg, {Rect} from 'react-native-svg';
+import QRCodeStyled from 'react-native-qrcode-styled';
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
+import {useThemeColor} from 'heroui-native';
 import {Button} from '@/components/ui/Button';
 import {Title, Body, Muted, Small} from '@/components/base/text';
 import type {AccessConfig} from '@/lib/access';
@@ -14,33 +14,13 @@ type Props = {
   expiresAt?: string | null;
 };
 
-function encodeQrMatrix(text: string): boolean[][] {
-  const size = 21;
-  const matrix = Array.from({length: size}, () => Array(size).fill(false));
-  let hash = 0;
-  for (let i = 0; i < text.length; i += 1) {
-    hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
-  }
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      const bit = (hash + x * 17 + y * 23) % 7;
-      matrix[y][x] = bit === 0 || bit === 1;
-    }
-  }
-  for (let i = 0; i < 7; i += 1) {
-    matrix[0][i] = true;
-    matrix[i][0] = true;
-    matrix[20][i] = true;
-    matrix[i][20] = true;
-    matrix[0][20 - i] = true;
-    matrix[20 - i][0] = true;
-  }
-  return matrix;
-}
-
 export function DropShareCard({dropId, access, expiresAt}: Props) {
   const url = Linking.createURL(`/d/${dropId}`);
-  const matrix = useMemo(() => encodeQrMatrix(url), [url]);
+  const [foreground, accent, surface] = useThemeColor([
+    'foreground',
+    'accent',
+    'surface',
+  ]);
 
   async function copyLink() {
     await Clipboard.setStringAsync(url);
@@ -53,15 +33,26 @@ export function DropShareCard({dropId, access, expiresAt}: Props) {
       {expiresAt ? <Muted>Expires {new Date(expiresAt).toLocaleString()}</Muted> : null}
 
       <View className="items-center gap-3">
-        <Svg width={160} height={160} viewBox="0 0 21 21">
-          {matrix.map((row, y) =>
-            row.map((cell, x) =>
-              cell ? (
-                <Rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill="currentColor" />
-              ) : null,
-            ),
-          )}
-        </Svg>
+        <View
+          className="rounded-3xl p-4"
+          style={{backgroundColor: surface}}>
+          <QRCodeStyled
+            data={url}
+            size={200}
+            pieceBorderRadius={0}
+            pieceCornerType="rounded"
+            pieceLiquidRadius={3}
+            color={foreground}
+            outerEyesOptions={{
+              borderRadius: 12,
+              color: accent,
+            }}
+            innerEyesOptions={{
+              borderRadius: 4,
+              color: accent,
+            }}
+          />
+        </View>
         <Small className="text-center text-muted">Scan or copy the link below</Small>
       </View>
 

@@ -1,5 +1,6 @@
 import '../../crypto';
 import '@/global.css';
+import '@heroui/styles/dist/heroui.min.css';
 import {useEffect, useState} from 'react';
 import {Platform} from 'react-native';
 import {Slot} from 'expo-router';
