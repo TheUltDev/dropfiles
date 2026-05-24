@@ -10,7 +10,7 @@
 | RLS + RPCs | Applied |
 | Storage bucket `drops` | Created (private, 5 GB limit) |
 | Storage policies (TUS uploads to `blobs/*`) | Applied |
-| Edge Function `uploads` | Deployed (JWT verified) |
+| Edge Function `uploads` | Deployed (`verify_jwt = false`; owner-token auth in function) |
 
 ## 1. Create project
 

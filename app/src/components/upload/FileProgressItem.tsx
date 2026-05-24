@@ -1,5 +1,5 @@
 import {View} from 'react-native';
-import {Button} from 'heroui-native';
+import {Button} from '@/components/ui/Button';
 import {Body, Muted, Small} from '@/components/base/text';
 import {formatBytes} from '@/lib/pickers';
 import type {LocalUpload} from '@/lib/db/local.types';

@@ -1,7 +1,7 @@
 import {useMemo, useState, useEffect} from 'react';
 import {ScrollView, View} from 'react-native';
 import {useRouter, type Href} from 'expo-router';
-import {Button} from 'heroui-native';
+import {Button} from '@/components/ui/Button';
 import {Title, Body, Muted, Small} from '@/components/base/text';
 import {AccessConfigForm} from '@/components/upload/AccessConfigForm';
 import {DropWizardStepper} from '@/components/upload/DropWizardStepper';

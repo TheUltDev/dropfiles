@@ -1,0 +1,5 @@
+# Edge Function JWT is disabled for `uploads` because the app uses Supabase
+# publishable keys (sb_publishable_*) which the gateway JWT verifier rejects.
+# Authorization is enforced in-function via ownerToken + service role lookups.
+[functions.uploads]
+verify_jwt = false

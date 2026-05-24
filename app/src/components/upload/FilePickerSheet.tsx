@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Platform, View} from 'react-native';
-import {Button} from 'heroui-native';
+import {Button} from '@/components/ui/Button';
 import {Body, Muted, Small} from '@/components/base/text';
 import {formatBytes, pickDocuments, pickMedia, type PickedFile} from '@/lib/pickers';
 

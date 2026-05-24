@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import Svg, {Rect} from 'react-native-svg';
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
-import {Button} from 'heroui-native';
+import {Button} from '@/components/ui/Button';
 import {Title, Body, Muted, Small} from '@/components/base/text';
 import type {AccessConfig} from '@/lib/access';
 import {summarizeAccess} from '@/lib/access';

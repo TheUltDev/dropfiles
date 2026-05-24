@@ -2,8 +2,9 @@ import {useEffect, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {useLocalSearchParams} from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import {Button, Input, Label, TextField} from 'heroui-native';
 import {Title, Body, Muted, Small} from '@/components/base/text';
+import {Button} from '@/components/ui/Button';
+import {TextField} from '@/components/ui/TextField';
 import {createSignedDownload, getDropForRecipient} from '@/lib/db/remote';
 import type {RecipientDrop} from '@/lib/supabase';
 import {formatBytes} from '@/lib/pickers';
@@ -55,25 +56,21 @@ export default function RecipientDropScreen() {
           <Muted>Enter credentials if required, then download files.</Muted>
         </View>
 
-        <TextField>
-          <Label>Password</Label>
-          <Input
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            placeholder="If required"
-          />
-        </TextField>
+        <TextField
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholder="If required"
+        />
 
-        <TextField>
-          <Label>Email</Label>
-          <Input
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            placeholder="If required"
-          />
-        </TextField>
+        <TextField
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          placeholder="If required"
+        />
 
         <Button onPress={loadDrop} isDisabled={loading}>
           {loading ? 'Checking…' : 'Unlock drop'}

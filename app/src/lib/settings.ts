@@ -1,5 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 import type {AccessConfig, AccessMode, HashAlgo} from '@/lib/access';
+import {defaultExpirationAt} from '@/lib/expiration';
 
 export type AppSettings = {
   defaultAccessMode: AccessMode;
@@ -12,16 +13,13 @@ export type AppSettings = {
   wifiOnly: boolean;
 };
 
-function defaultExpirationAt(): string {
-  const date = new Date();
-  date.setDate(date.getDate() + 7);
-  date.setHours(23, 59, 59, 0);
-  return date.toISOString();
+function defaultExpirationAtValue(): string {
+  return defaultExpirationAt();
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
   defaultAccessMode: 'link',
-  defaultExpirationAt: defaultExpirationAt(),
+  defaultExpirationAt: defaultExpirationAtValue(),
   defaultMaxBytes: 5 * 1024 * 1024 * 1024,
   defaultMaxFiles: 10,
   defaultHashAlgo: 'blake3',

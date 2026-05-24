@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {ScrollView, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
-import {Button} from 'heroui-native';
+import {Button} from '@/components/ui/Button';
 import {Title, Muted} from '@/components/base/text';
 import {DropShareCard} from '@/components/upload/DropShareCard';
 import {FileProgressItem} from '@/components/upload/FileProgressItem';

@@ -36,9 +36,13 @@ async function callUploadFunction<T>(
     body: JSON.stringify({ownerToken, ...body}),
   });
 
-  const payload = await response.json();
+  const payload = (await response.json()) as {error?: string; message?: string};
   if (!response.ok) {
-    throw new Error(payload.error ?? `Upload function failed (${response.status})`);
+    throw new Error(
+      payload.error ??
+        payload.message ??
+        `Upload function failed (${response.status})`,
+    );
   }
   return payload as T;
 }

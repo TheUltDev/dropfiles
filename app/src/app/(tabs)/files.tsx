@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {RefreshControl, ScrollView, View} from 'react-native';
 import {useRouter, type Href} from 'expo-router';
-import {Button} from 'heroui-native';
+import {Button} from '@/components/ui/Button';
 import {Title, Body, Muted, Small} from '@/components/base/text';
 import {listMyDrops} from '@/lib/db/remote';
 import type {DropWithFiles} from '@/lib/supabase';
