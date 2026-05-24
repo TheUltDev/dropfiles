@@ -1,7 +1,5 @@
 import type {AccessConfig, AccessMode, HashAlgo} from '@/lib/access';
-import {hashLabel} from '@/lib/access';
 import {View} from 'react-native';
-import {Body, Muted, Small} from '@/components/base/text';
 import {AccessModeSection} from '@/components/forms/AccessModeSection';
 import {AllowedMimeSection} from '@/components/forms/AllowedMimeSection';
 import {ExpirationSection} from '@/components/forms/ExpirationSection';
@@ -58,15 +56,6 @@ export function AccessConfigForm({value, onChange}: Props) {
         value={value.hashAlgo}
         onChange={(hashAlgo: HashAlgo) => onChange({...value, hashAlgo})}
       />
-
-      <View className="rounded-2xl bg-surface-secondary p-4">
-        <Small className="font-semibold">Summary</Small>
-        <Body className="mt-1 text-muted">
-          {value.maxFiles} file(s),{' '}
-          {value.maxBytes ? `${Math.round(value.maxBytes / (1024 * 1024))} MB max` : 'no size limit'}
-          , hash: {hashLabel(value.hashAlgo)}
-        </Body>
-      </View>
     </View>
   );
 }

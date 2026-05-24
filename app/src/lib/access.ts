@@ -24,10 +24,10 @@ export const DEFAULT_ACCESS_CONFIG: AccessConfig = {
 };
 
 export const ACCESS_MODE_LABELS: Record<AccessMode, string> = {
-  anyone: 'Anyone',
-  link: 'Anyone with link',
+  anyone: 'Public',
+  link: 'Link only',
   email: 'Specific emails',
-  password: 'Password protected',
+  password: 'Password required',
 };
 
 export function summarizeAccess(config: AccessConfig): string {

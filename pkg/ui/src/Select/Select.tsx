@@ -44,7 +44,7 @@ function SelectPopover({children}: {children: ReactNode}) {
 function SelectItem({value, label, children}: SelectItemProps) {
   return (
     <NativeSelect.Item value={value} label={label}>
-      {children ?? label}
+      {children}
     </NativeSelect.Item>
   );
 }

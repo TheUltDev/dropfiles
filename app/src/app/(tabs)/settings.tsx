@@ -1,22 +1,17 @@
 'use client';
 
-import {useEffect, useState} from 'react';
 import {Platform, ScrollView, View} from 'react-native';
-import {Title, Body, Muted} from '@/components/base/text';
+import {useEffect, useState} from 'react';
+import {Button, Label, Switch} from '@workspace/ui';
 import {AccessModeSection} from '@/components/forms/AccessModeSection';
 import {AllowedMimeSection} from '@/components/forms/AllowedMimeSection';
 import {ExpirationSection} from '@/components/forms/ExpirationSection';
 import {HashAlgoSection} from '@/components/forms/HashAlgoSection';
 import {MaxFilesSection} from '@/components/forms/MaxFilesSection';
-import {Button, Label, Switch} from '@workspace/ui';
-import {
-  DEFAULT_SETTINGS,
-  loadSettings,
-  saveSettings,
-  type AppSettings,
-} from '@/lib/settings';
-import type {AccessMode, HashAlgo} from '@/lib/access';
+import {Title, Muted} from '@/components/base/text';
 import {resetOwnerToken} from '@/lib/identity';
+import {loadSettings, saveSettings, type AppSettings} from '@/lib/settings';
+import type {AccessMode, HashAlgo} from '@/lib/access';
 
 export default function SettingsScreen() {
   const [settings, setSettings] = useState<AppSettings | null>(null);
@@ -92,8 +87,8 @@ export default function SettingsScreen() {
         />
 
         <HashAlgoSection
-          title="BLAKE3 deduplication"
-          description="Hash files by default on new drops"
+          title="File hashing"
+          description="Enable to deduplicate uploads"
           value={settings.defaultHashAlgo}
           onChange={(defaultHashAlgo: HashAlgo) =>
             setSettings((current) => (current ? {...current, defaultHashAlgo} : current))
@@ -129,14 +124,6 @@ export default function SettingsScreen() {
         <Button variant="secondary" onPress={handleResetIdentity}>
           Reset device identity
         </Button>
-
-        <View className="rounded-2xl bg-surface-secondary p-4">
-          <Body className="font-semibold">About</Body>
-          <Muted className="mt-1">
-            Web uploads use TUS. Native uploads use background multipart S3 via Nitro Cloud
-            Uploader.
-          </Muted>
-        </View>
       </ScrollView>
     </View>
   );

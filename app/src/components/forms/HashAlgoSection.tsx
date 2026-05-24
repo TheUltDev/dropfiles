@@ -11,8 +11,8 @@ type Props = {
 };
 
 export function HashAlgoSection({
-  title = 'BLAKE3 file hash',
-  description = 'Compute a BLAKE3 digest and deduplicate uploads',
+  title = 'File hashing',
+  description = 'Enable to deduplicate uploads',
   value,
   onChange,
 }: Props) {
