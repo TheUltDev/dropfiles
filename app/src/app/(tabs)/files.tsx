@@ -28,15 +28,13 @@ export default function FilesScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => void load(), [load]);
 
   return (
     <View className="flex-1 bg-background">
       <ScrollView
         className="flex-1"
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={load}/>}
         contentContainerClassName="max-w-[800px] gap-4 px-6 pt-safe pb-safe-offset-8 self-center w-full">
         <View className="flex-row items-center justify-between pt-4">
           <Title className="text-3xl">Files</Title>
@@ -44,16 +42,13 @@ export default function FilesScreen() {
             New
           </Button>
         </View>
-
         {error ? <Muted className="text-danger">{error}</Muted> : null}
-
         {!loading && drops.length === 0 ? (
           <View className="rounded-3xl bg-surface-secondary p-6">
             <Body className="font-semibold">No drops yet</Body>
             <Muted className="mt-1">Create your first drop to start sharing files.</Muted>
           </View>
         ) : null}
-
         {drops.map((drop) => {
           const totalBytes = drop.files.reduce((sum, file) => sum + file.size, 0);
           const completed = drop.files.filter((file) => file.status === 'completed').length;

@@ -12,9 +12,7 @@ export default function HomeScreen() {
   const activeUploads = useActiveUploads();
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    setReady(true);
-  }, []);
+  useEffect(() => setReady(true), []);
 
   return (
     <View className="flex-1 bg-background">
@@ -22,7 +20,9 @@ export default function HomeScreen() {
         className="flex-1"
         contentContainerClassName="max-w-[800px] gap-6 px-6 pt-safe pb-safe-offset-8 self-center w-full">
         <View className="gap-2 pt-4">
-          <Title>Dropfiles</Title>
+          <Title>
+            Dropfiles
+          </Title>
           <Subtitle className="text-muted">
             Send large files with resume and deduplication
           </Subtitle>
