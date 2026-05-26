@@ -1,12 +1,10 @@
 import * as tus from 'tus-js-client';
-import {
-  bucketName,
-  getSupabaseAnonKey,
-  getTusEndpoint,
-} from '@/lib/supabase';
 import {sqliteUrlStorage} from '@/lib/db/local';
+import {bucketName, getTusEndpoint, getSupabaseAnonKey} from '@/lib/supabase';
 
 const CHUNK_SIZE = 6 * 1024 * 1024;
+
+export {sqliteUrlStorage} from '@/lib/db/local';
 
 export type UploadTarget = {
   uri: string;
@@ -24,15 +22,6 @@ export type UploadHandlers = {
   onError?: (error: Error) => void;
 };
 
-async function fileToBlob(uri: string, blob?: Blob): Promise<Blob> {
-  if (blob) return blob;
-  const response = await fetch(uri);
-  if (!response.ok) {
-    throw new Error(`Failed to read file for upload (${response.status})`);
-  }
-  return response.blob();
-}
-
 export type WebUploadController = {
   pause: () => void;
   resume: () => void;
@@ -46,7 +35,6 @@ export async function startWebUpload(
   const blob = await fileToBlob(target.uri, target.blob);
   const endpoint = getTusEndpoint();
   const anonKey = getSupabaseAnonKey();
-
   const upload = new tus.Upload(blob, {
     endpoint,
     retryDelays: [0, 3000, 5000, 10000, 20000],
@@ -86,4 +74,11 @@ export async function startWebUpload(
   };
 }
 
-export {sqliteUrlStorage};
+async function fileToBlob(uri: string, blob?: Blob): Promise<Blob> {
+  if (blob) return blob;
+  const response = await fetch(uri);
+  if (!response.ok) {
+    throw new Error(`Failed to read file for upload (${response.status})`);
+  }
+  return response.blob();
+}

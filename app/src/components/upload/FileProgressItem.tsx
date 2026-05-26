@@ -1,22 +1,14 @@
+import type {LocalUpload} from '@/lib/db/local.types';
+
 import {View} from 'react-native';
 import {Button} from '@workspace/ui';
-import {Body, Muted, Small} from '@/components/base/text';
 import {formatBytes} from '@/lib/pickers';
-import type {LocalUpload} from '@/lib/db/local.types';
 import {uploadManager} from '@/lib/storage/manager';
+import {Body, Muted, Small} from '@/components/base/text';
 
 type Props = {
   upload: LocalUpload;
 };
-
-function UploadProgressBar({value}: {value: number}) {
-  const clamped = Math.max(0, Math.min(1, value));
-  return (
-    <View className="h-2 overflow-hidden rounded-full bg-default">
-      <View className="h-full rounded-full bg-accent" style={{width: `${clamped * 100}%`}} />
-    </View>
-  );
-}
 
 export function FileProgressItem({upload}: Props) {
   const progress = upload.size > 0 ? upload.bytes_uploaded / upload.size : 0;
@@ -58,6 +50,15 @@ export function FileProgressItem({upload}: Props) {
           </Button>
         </View>
       ) : null}
+    </View>
+  );
+}
+
+function UploadProgressBar({value}: {value: number}) {
+  const clamped = Math.max(0, Math.min(1, value));
+  return (
+    <View className="h-2 overflow-hidden rounded-full bg-default">
+      <View className="h-full rounded-full bg-accent" style={{width: `${clamped * 100}%`}} />
     </View>
   );
 }

@@ -1,18 +1,20 @@
+import type {Href} from 'expo-router';
+import type {DropWithFiles} from '@/lib/supabase';
+
 import {useCallback, useEffect, useState} from 'react';
 import {RefreshControl, ScrollView, View} from 'react-native';
-import {useRouter, type Href} from 'expo-router';
+import {useRouter} from 'expo-router';
 import {Button} from '@workspace/ui';
-import {Title, Body, Muted, Small} from '@/components/base/text';
 import {listMyDrops} from '@/lib/db/remote';
-import type {DropWithFiles} from '@/lib/supabase';
 import {formatBytes} from '@/lib/pickers';
 import {summarizeAccess} from '@/lib/access';
+import {Title, Body, Muted, Small} from '@/components/base/text';
 
 export default function FilesScreen() {
   const router = useRouter();
   const [drops, setDrops] = useState<DropWithFiles[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     try {

@@ -1,8 +1,10 @@
+import type {PickedFile} from '@/lib/pickers';
+
 import {useState} from 'react';
 import {Platform, View} from 'react-native';
-import {Button} from '@workspace/ui';
 import {Body, Muted, Small} from '@/components/base/text';
-import {formatBytes, pickDocuments, pickMedia, type PickedFile} from '@/lib/pickers';
+import {formatBytes, pickDocuments, pickMedia} from '@/lib/pickers';
+import {Button} from '@workspace/ui';
 
 type Props = {
   files: PickedFile[];
@@ -13,15 +15,15 @@ type Props = {
 export function FilePickerSheet({files, maxFiles, onChange}: Props) {
   const [error, setError] = useState<string | null>(null);
 
-  async function mergePicked(picked: PickedFile[]) {
+  const mergePicked = (picked: PickedFile[]) => {
     const merged = [...files, ...picked].slice(0, maxFiles);
     if (files.length + picked.length > maxFiles) {
       setError(`Only ${maxFiles} file(s) allowed for this drop.`);
     }
     onChange(merged);
-  }
+  };
 
-  async function handlePick(kind: 'documents' | 'media') {
+  const handlePick = async (kind: 'documents' | 'media') => {
     try {
       setError(null);
       const picked = kind === 'documents' ? await pickDocuments() : await pickMedia();
@@ -29,9 +31,9 @@ export function FilePickerSheet({files, maxFiles, onChange}: Props) {
     } catch (pickError) {
       setError(pickError instanceof Error ? pickError.message : 'Failed to pick files');
     }
-  }
+  };
 
-  async function handleDrop(fileList: FileList | File[]) {
+  const handleDrop = async (fileList: FileList | File[]) => {
     try {
       setError(null);
       const {pickFromFileList} = await import('@/lib/pickers.web');
@@ -40,22 +42,25 @@ export function FilePickerSheet({files, maxFiles, onChange}: Props) {
     } catch (pickError) {
       setError(pickError instanceof Error ? pickError.message : 'Failed to add files');
     }
-  }
+  };
 
-  function removeFile(id: string) {
+  const removeFile = (id: string) => {
     onChange(files.filter((file) => file.id !== id));
-  }
+  };
 
   return (
     <View className="gap-4">
-      <Dropzone onPick={handlePick} onDrop={handleDrop} />
-
+      <Dropzone
+        onPick={handlePick}
+        onDrop={handleDrop}
+      />
       {error ? <Muted className="text-danger">{error}</Muted> : null}
-
       <View className="gap-2">
         {files.length === 0 ? (
           <View className="rounded-2xl border border-dashed border-border p-6">
-            <Muted className="text-center">No files selected yet.</Muted>
+            <Muted className="text-center">
+              No files selected yet.
+            </Muted>
           </View>
         ) : (
           files.map((file) => (
@@ -79,19 +84,22 @@ export function FilePickerSheet({files, maxFiles, onChange}: Props) {
   );
 }
 
-function Dropzone({
-  onPick,
-  onDrop,
-}: {
+function Dropzone({onPick, onDrop}: {
   onPick: (kind: 'documents' | 'media') => void;
   onDrop?: (files: FileList | File[]) => void;
 }) {
   if (Platform.OS !== 'web') {
     return (
       <View className="items-center gap-3 rounded-3xl border border-dashed border-border bg-surface-secondary p-8">
-        <Body className="font-semibold">Add files to your drop</Body>
-        <Muted className="text-center">Pick documents or media to upload with resume support.</Muted>
-        <Button onPress={() => onPick('documents')}>Choose files</Button>
+        <Body className="font-semibold">
+          Add files to your drop
+        </Body>
+        <Muted className="text-center">
+          Pick documents or media to upload with resume support.
+        </Muted>
+        <Button onPress={() => onPick('documents')}>
+          Choose files
+        </Button>
         <Button variant="secondary" onPress={() => onPick('media')}>
           Photos & videos
         </Button>
@@ -109,11 +117,17 @@ function Dropzone({
       onDrop={async (event: DragEvent) => {
         event.preventDefault();
         if (!event.dataTransfer?.files?.length || !onDrop) return;
-        await onDrop(event.dataTransfer.files);
+        onDrop(event.dataTransfer.files);
       }}>
-      <Body className="font-semibold">Drop files here</Body>
-      <Muted className="text-center">Drag and drop or browse to add files.</Muted>
-      <Button onPress={() => onPick('documents')}>Browse files</Button>
+      <Body className="font-semibold">
+        Drop files here
+      </Body>
+      <Muted className="text-center">
+        Drag and drop or browse to add files.
+      </Muted>
+      <Button onPress={() => onPick('documents')}>
+        Browse files
+      </Button>
     </View>
   );
 }

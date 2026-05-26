@@ -1,4 +1,5 @@
-import {Tabs, TabList, TabTrigger, TabSlot, type TabTriggerSlotProps, type TabListProps} from 'expo-router/ui';
+import type {TabListProps, TabTriggerSlotProps} from 'expo-router/ui';
+import {Tabs, TabList, TabTrigger, TabSlot} from 'expo-router/ui';
 import {Pressable, View} from 'react-native';
 import {twMerge} from 'tailwind-merge';
 import {Small} from '@/components/base/text';
@@ -10,16 +11,28 @@ export default function TabsLayout() {
       <TabSlot style={{height: '100%'}}/>
       <TabList asChild>
         <TabListWeb>
-          <TabTrigger name="index" href="/" asChild>
+          <TabTrigger
+            name="index"
+            href="/"
+            asChild>
             <TabButton>Dashboard</TabButton>
           </TabTrigger>
-          <TabTrigger name="files" href="/files" asChild>
+          <TabTrigger
+            name="files"
+            href="/files"
+            asChild>
             <TabButton>Files</TabButton>
           </TabTrigger>
-          <TabTrigger name="settings" href="/settings" asChild>
+          <TabTrigger
+            name="settings"
+            href="/settings"
+            asChild>
             <TabButton>Settings</TabButton>
           </TabTrigger>
-          <TabTrigger name="usage" href="/usage" asChild>
+          <TabTrigger
+            name="usage"
+            href="/usage"
+            asChild>
             <TabButton>Usage</TabButton>
           </TabTrigger>
         </TabListWeb>

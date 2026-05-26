@@ -12,6 +12,8 @@ export type AppSettings = {
   wifiOnly: boolean;
 };
 
+const SETTINGS_KEY = 'dropfiles_settings';
+
 export const DEFAULT_SETTINGS: AppSettings = {
   defaultAccessMode: 'link',
   defaultExpirationAt: defaultExpirationAt(),
@@ -23,28 +25,12 @@ export const DEFAULT_SETTINGS: AppSettings = {
   wifiOnly: false,
 };
 
-const SETTINGS_KEY = 'dropfiles_settings';
-
-function normalizeSettings(raw: Record<string, unknown>): AppSettings {
-  const settings = {...DEFAULT_SETTINGS, ...raw} as AppSettings & {
-    defaultExpirationDays?: number | null;
-  };
-
-  if (settings.defaultExpirationAt == null && settings.defaultExpirationDays != null) {
-    settings.defaultExpirationAt = new Date(
-      Date.now() + settings.defaultExpirationDays * 86400000,
-    ).toISOString();
-  }
-
-  delete settings.defaultExpirationDays;
-  return settings;
-}
-
 export async function loadSettings(): Promise<AppSettings> {
-  if (typeof localStorage === 'undefined') return {...DEFAULT_SETTINGS};
-
+  if (typeof localStorage === 'undefined')
+    return {...DEFAULT_SETTINGS};
   const raw = localStorage.getItem(SETTINGS_KEY);
-  if (!raw) return {...DEFAULT_SETTINGS};
+  if (!raw)
+    return {...DEFAULT_SETTINGS};
   try {
     return normalizeSettings(JSON.parse(raw) as Record<string, unknown>);
   } catch {
@@ -53,7 +39,8 @@ export async function loadSettings(): Promise<AppSettings> {
 }
 
 export async function saveSettings(settings: AppSettings): Promise<void> {
-  if (typeof localStorage === 'undefined') return;
+  if (typeof localStorage === 'undefined')
+    return;
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 }
 
@@ -72,10 +59,10 @@ export function isMimeAllowed(
   mime: string,
   settings: Pick<AppSettings, 'allowedMime' | 'blockedMime'>,
 ): boolean {
-  if (settings.blockedMime.some((pattern) => mimeMatches(mime, pattern))) {
+  if (settings.blockedMime.some((pattern) => mimeMatches(mime, pattern)))
     return false;
-  }
-  if (settings.allowedMime.length === 0) return true;
+  if (settings.allowedMime.length === 0)
+    return true;
   return settings.allowedMime.some((pattern) => mimeMatches(mime, pattern));
 }
 
@@ -84,4 +71,19 @@ function mimeMatches(mime: string, pattern: string): boolean {
     return mime.startsWith(pattern.slice(0, -1));
   }
   return mime === pattern;
+}
+
+function normalizeSettings(raw: Record<string, unknown>): AppSettings {
+  const settings = {...DEFAULT_SETTINGS, ...raw} as AppSettings & {
+    defaultExpirationDays?: number | null;
+  };
+
+  if (settings.defaultExpirationAt == null && settings.defaultExpirationDays != null) {
+    settings.defaultExpirationAt = new Date(
+      Date.now() + settings.defaultExpirationDays * 86400000,
+    ).toISOString();
+  }
+
+  delete settings.defaultExpirationDays;
+  return settings;
 }

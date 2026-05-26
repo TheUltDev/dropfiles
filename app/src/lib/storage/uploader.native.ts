@@ -1,12 +1,12 @@
 import {CloudUploader} from 'react-native-nitro-cloud-uploader';
-import {
-  abortMultipartUpload,
-  completeMultipartUpload,
-  createMultipartUpload,
-  singleUpload,
-} from '@/lib/db/remote';
 import {stripFileScheme} from '@/lib/pickers';
 import {saveUploadParts} from '@/lib/db/local';
+import {
+  singleUpload,
+  createMultipartUpload,
+  completeMultipartUpload,
+  abortMultipartUpload,
+} from '@/lib/db/remote';
 
 const MULTIPART_THRESHOLD = 5 * 1024 * 1024;
 const CHUNK_SIZE = 6 * 1024 * 1024;

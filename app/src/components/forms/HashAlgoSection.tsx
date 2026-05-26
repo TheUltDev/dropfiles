@@ -1,7 +1,7 @@
+import type {HashAlgo} from '@/lib/access';
 import {View} from 'react-native';
 import {Muted} from '@/components/base/text';
 import {Label, Switch} from '@workspace/ui';
-import type {HashAlgo} from '@/lib/access';
 
 type Props = {
   title?: string;

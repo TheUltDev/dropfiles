@@ -1,49 +1,49 @@
+import type {RecipientDrop} from '@/lib/supabase';
+import {openBrowserAsync} from 'expo-web-browser';
+import {useLocalSearchParams} from 'expo-router';
 import {useEffect, useState} from 'react';
 import {Platform, ScrollView, View} from 'react-native';
-import {useLocalSearchParams} from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
 import {Title, Body, Muted, Small} from '@/components/base/text';
 import {Button, Input, Label, TextField} from '@workspace/ui';
 import {createSignedDownload, getDropForRecipient} from '@/lib/db/remote';
-import type {RecipientDrop} from '@/lib/supabase';
 import {formatBytes} from '@/lib/pickers';
 
 export default function RecipientDropScreen() {
   const {id} = useLocalSearchParams<{id: string}>();
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
   const [drop, setDrop] = useState<RecipientDrop | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  async function loadDrop() {
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  
+  const loadDrop = async () => {
     if (!id) return;
     try {
       setLoading(true);
       setError(null);
       const data = await getDropForRecipient(id, {password, email});
       setDrop(data);
-    } catch (loadError) {
+    } catch (err) {
       setDrop(null);
-      setError(loadError instanceof Error ? loadError.message : 'Unable to open drop');
+      setError(err instanceof Error ? err.message : 'Unable to open drop');
     } finally {
       setLoading(false);
     }
   }
-
+  
+  const downloadFile = async (fileId: string) => {
+    try {
+      const url = await createSignedDownload(fileId, {password, email});
+      await openBrowserAsync(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Download failed');
+    }
+  }
+  
   useEffect(() => {
     if (!id) return;
     void loadDrop();
   }, [id]);
-
-  async function downloadFile(fileId: string) {
-    try {
-      const url = await createSignedDownload(fileId, {password, email});
-      await WebBrowser.openBrowserAsync(url);
-    } catch (downloadError) {
-      setError(downloadError instanceof Error ? downloadError.message : 'Download failed');
-    }
-  }
 
   return (
     <View className="flex-1 bg-background">
@@ -54,7 +54,6 @@ export default function RecipientDropScreen() {
           <Title>Download drop</Title>
           <Muted>Enter credentials if required, then download files.</Muted>
         </View>
-
         {Platform.OS === 'web' ? (
           <>
             <TextField className="w-full" value={password} onChange={setPassword}>
@@ -88,13 +87,10 @@ export default function RecipientDropScreen() {
             </TextField>
           </>
         )}
-
         <Button onPress={loadDrop} isDisabled={loading}>
           {loading ? 'Checking…' : 'Unlock drop'}
         </Button>
-
         {error ? <Muted className="text-danger">{error}</Muted> : null}
-
         {drop?.files?.length ? (
           <View className="gap-3">
             {drop.files.map((file) => (

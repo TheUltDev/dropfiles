@@ -1,13 +1,26 @@
+import type {DropWithFiles} from '@/lib/supabase';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {RefreshControl, ScrollView, View} from 'react-native';
 import {Title, Body, Muted, Small} from '@/components/base/text';
 import {listMyDrops} from '@/lib/db/remote';
-import type {DropWithFiles} from '@/lib/supabase';
 import {formatBytes} from '@/lib/pickers';
 
 export default function UsageScreen() {
-  const [drops, setDrops] = useState<DropWithFiles[]>([]);
   const [loading, setLoading] = useState(true);
+  const [drops, setDrops] = useState<DropWithFiles[]>([]);
+  const stats = useMemo(() => {
+    const files = drops.flatMap((drop) => drop.files);
+    const completed = files.filter((file) => file.status === 'completed');
+    const deduped = completed.filter((file) => file.blob_hash).length;
+    const totalBytes = completed.reduce((sum, file) => sum + file.size, 0);
+    return {
+      dropCount: drops.length,
+      fileCount: files.length,
+      completedCount: completed.length,
+      totalBytes,
+      deduped,
+    };
+  }, [drops]);
 
   const load = useCallback(async () => {
     try {
@@ -22,20 +35,6 @@ export default function UsageScreen() {
     void load();
   }, [load]);
 
-  const stats = useMemo(() => {
-    const files = drops.flatMap((drop) => drop.files);
-    const completed = files.filter((file) => file.status === 'completed');
-    const totalBytes = completed.reduce((sum, file) => sum + file.size, 0);
-    const deduped = completed.filter((file) => file.blob_hash).length;
-    return {
-      dropCount: drops.length,
-      fileCount: files.length,
-      completedCount: completed.length,
-      totalBytes,
-      deduped,
-    };
-  }, [drops]);
-
   return (
     <View className="flex-1 bg-background">
       <ScrollView
@@ -46,7 +45,6 @@ export default function UsageScreen() {
           <Title className="text-3xl">Usage</Title>
           <Muted>Storage and upload activity for this device.</Muted>
         </View>
-
         <View className="gap-3 rounded-3xl bg-surface-secondary p-5">
           <Stat label="Drops" value={String(stats.dropCount)} />
           <Stat label="Files" value={`${stats.completedCount}/${stats.fileCount}`} />

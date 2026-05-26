@@ -1,5 +1,5 @@
-import {useCallback, useRef, useSyncExternalStore} from 'react';
 import type {LocalUpload} from '@/lib/db/local.types';
+import {useCallback, useRef, useSyncExternalStore} from 'react';
 
 type UploadStoreSnapshot = {
   uploads: LocalUpload[];
@@ -74,8 +74,9 @@ export function useActiveUploads(): LocalUpload[] {
   );
 }
 
-export function useDropUploads(dropId: string): LocalUpload[] {
-  return useUploadStore((state) =>
-    state.uploads.filter((upload) => upload.drop_id === dropId),
+export function useDropUploads(dropId: string): {uploads: LocalUpload[]} {
+  const uploads = useUploadStore(state => state.uploads
+    .filter(upload => upload.drop_id === dropId)
   );
+  return {uploads};
 }

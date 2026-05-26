@@ -1,6 +1,21 @@
 import type {HashAlgo} from '@/lib/access';
 import {canUseWasmThreads, digestToHex} from '@/lib/hash.utils';
 
+export {canUseWasmThreads} from '@/lib/hash.utils';
+
+export async function hashFile(
+  uri: string,
+  algo: HashAlgo,
+): Promise<string | null> {
+  if (algo === 'none')
+    return null;
+  const blake3 = await loadBlake3();
+  const response = await fetch(uri);
+  if (!response.ok)
+    throw new Error(`Failed to read file for hashing (${response.status})`);
+  return hashStream(blake3, response);
+}
+
 type Blake3Fn = {
   (data: Uint8Array): Uint8Array;
   create(): {
@@ -27,7 +42,6 @@ async function loadBlake3(): Promise<Blake3Fn> {
       return blake3 as Blake3Fn;
     })();
   }
-
   return blake3Promise;
 }
 
@@ -36,7 +50,6 @@ async function hashStream(blake3: Blake3Fn, response: Response): Promise<string>
   if (!reader) {
     return digestToHex(blake3(new Uint8Array(await response.arrayBuffer())));
   }
-
   const hasher = blake3.create();
   while (true) {
     const {done, value} = await reader.read();
@@ -45,20 +58,5 @@ async function hashStream(blake3: Blake3Fn, response: Response): Promise<string>
       hasher.update(value);
     }
   }
-
   return digestToHex(hasher.digest());
 }
-
-export async function hashFile(uri: string, algo: HashAlgo): Promise<string | null> {
-  if (algo === 'none') return null;
-
-  const blake3 = await loadBlake3();
-  const response = await fetch(uri);
-  if (!response.ok) {
-    throw new Error(`Failed to read file for hashing (${response.status})`);
-  }
-
-  return hashStream(blake3, response);
-}
-
-export {canUseWasmThreads} from '@/lib/hash.utils';

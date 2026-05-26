@@ -1,4 +1,4 @@
-import {get, set, del, keys} from 'idb-keyval';
+import {get, set, keys} from 'idb-keyval';
 import type {PreviousUpload, UrlStorage} from 'tus-js-client';
 import type {LocalUpload, LocalUploadStatus, UploadPart} from '@/lib/db/local.types';
 

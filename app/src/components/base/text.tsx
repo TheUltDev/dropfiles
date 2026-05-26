@@ -1,6 +1,6 @@
-import {Text} from 'react-native';
-import {twMerge} from 'tailwind-merge';
 import type {TextProps} from 'react-native';
+import {twMerge} from 'tailwind-merge';
+import {Text} from 'react-native';
 
 export function Body({className, ...rest}: TextProps & {className?: string}) {
   return (

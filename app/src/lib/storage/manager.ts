@@ -1,26 +1,29 @@
-import {Platform, PermissionsAndroid} from 'react-native';
-import NetInfo from '@react-native-community/netinfo';
-import type {AccessConfig} from '@/lib/access';
 import type {PickedFile} from '@/lib/pickers';
-import {hashFile} from '@/lib/hash';
+import type {LocalUpload} from '@/lib/db/local';
+import type {AccessConfig} from '@/lib/access';
+
+import NetInfo from '@react-native-community/netinfo';
+import {Platform, PermissionsAndroid} from 'react-native';
+import {patchUploadInStore, setUploads} from '@/lib/storage/store';
 import {loadSettings} from '@/lib/settings';
+import {hashFile} from '@/lib/hash';
+
 import {
-  insertUpload,
   listUploads,
+  insertUpload,
   updateUpload,
-  type LocalUpload,
 } from '@/lib/db/local';
+
 import {
   addFile,
-  attachFileToBlob,
-  buildStoragePath,
+  failFile,
   claimBlob,
   createDrop,
-  failFile,
   finalizeUpload,
+  attachFileToBlob,
+  buildStoragePath,
   updateFileProgress,
 } from '@/lib/db/remote';
-import {patchUploadInStore, setUploads} from '@/lib/storage/store';
 
 type ActiveController = {
   pause: () => void | Promise<void>;
@@ -43,9 +46,8 @@ class UploadManager {
       .map((item) => item.id);
     this.initialized = true;
     this.netUnsubscribe = NetInfo.addEventListener((state) => {
-      if (state.isConnected) {
+      if (state.isConnected)
         void this.processQueue();
-      }
     });
     void this.processQueue();
   }
@@ -88,7 +90,9 @@ class UploadManager {
         }
       }
 
-      const storagePath = hash ? buildStoragePath(hash) : buildStoragePath(file.id);
+      const storagePath = hash
+        ? buildStoragePath(hash)
+        : buildStoragePath(file.id);
 
       const localUpload: LocalUpload = {
         id: crypto.randomUUID(),
@@ -126,10 +130,8 @@ class UploadManager {
       await entry.pause();
       this.active.delete(localId);
     }
-    await updateUpload(localId, {
-      status: 'paused',
-      updated_at: new Date().toISOString(),
-    });
+    const now = new Date().toISOString();
+    await updateUpload(localId, {status: 'paused', updated_at: now});
     const record = await this.getLocal(localId);
     if (record) {
       await updateFileProgress(record.file_id, {status: 'paused'});
@@ -143,11 +145,8 @@ class UploadManager {
     if (!this.queue.includes(localId)) {
       this.queue.push(localId);
     }
-    await updateUpload(localId, {
-      status: 'pending',
-      error: null,
-      updated_at: new Date().toISOString(),
-    });
+    const now = new Date().toISOString();
+    await updateUpload(localId, {status: 'pending', error: null, updated_at: now});
     patchUploadInStore(localId, {status: 'pending', error: null});
     void this.processQueue();
   }
@@ -159,10 +158,8 @@ class UploadManager {
       this.active.delete(localId);
     }
     this.queue = this.queue.filter((id) => id !== localId);
-    await updateUpload(localId, {
-      status: 'cancelled',
-      updated_at: new Date().toISOString(),
-    });
+    const now = new Date().toISOString();
+    await updateUpload(localId, {status: 'cancelled', updated_at: now});
     patchUploadInStore(localId, {status: 'cancelled'});
   }
 
@@ -193,12 +190,9 @@ class UploadManager {
       try {
         await this.startUpload(record);
       } catch (error) {
+        const now = new Date().toISOString();
         const message = error instanceof Error ? error.message : 'Upload failed';
-        await updateUpload(localId, {
-          status: 'failed',
-          error: message,
-          updated_at: new Date().toISOString(),
-        });
+        await updateUpload(localId, {status: 'failed', error: message, updated_at: now});
         await failFile(record.file_id, message);
         patchUploadInStore(localId, {status: 'failed', error: message});
       }
@@ -215,10 +209,8 @@ class UploadManager {
       await requestUploadNotificationPermission();
     }
 
-    await updateUpload(record.id, {
-      status: 'uploading',
-      updated_at: new Date().toISOString(),
-    });
+    const now = new Date().toISOString();
+    await updateUpload(record.id, {status: 'uploading', updated_at: now});
     await updateFileProgress(record.file_id, {status: 'uploading'});
     patchUploadInStore(record.id, {status: 'uploading'});
 
@@ -236,14 +228,9 @@ class UploadManager {
         },
         {
           onProgress: (bytesUploaded) => {
-            void updateUpload(record.id, {
-              bytes_uploaded: bytesUploaded,
-              updated_at: new Date().toISOString(),
-            });
-            void updateFileProgress(record.file_id, {
-              bytes_uploaded: bytesUploaded,
-              status: 'uploading',
-            });
+            const now = new Date().toISOString();
+            void updateUpload(record.id, {bytes_uploaded: bytesUploaded, updated_at: now});
+            void updateFileProgress(record.file_id, {bytes_uploaded: bytesUploaded, status: 'uploading'});
             patchUploadInStore(record.id, {bytes_uploaded: bytesUploaded});
           },
           onSuccess: async () => {
@@ -258,19 +245,14 @@ class UploadManager {
             } else {
               await updateFileProgress(record.file_id, {status: 'completed'});
             }
-            await updateUpload(record.id, {
-              status: 'completed',
-              updated_at: new Date().toISOString(),
-            });
+            const now = new Date().toISOString();
+            await updateUpload(record.id, {status: 'completed', updated_at: now});
             patchUploadInStore(record.id, {status: 'completed'});
           },
           onError: async (error) => {
             this.active.delete(record.id);
-            await updateUpload(record.id, {
-              status: 'failed',
-              error: error.message,
-              updated_at: new Date().toISOString(),
-            });
+            const now = new Date().toISOString();
+            await updateUpload(record.id, {status: 'failed', error: error.message, updated_at: now});
             await failFile(record.file_id, error.message);
             patchUploadInStore(record.id, {status: 'failed', error: error.message});
           },
@@ -297,31 +279,21 @@ class UploadManager {
       },
       {
         onProgress: (bytesUploaded) => {
-          void updateUpload(record.id, {
-            bytes_uploaded: bytesUploaded,
-            updated_at: new Date().toISOString(),
-          });
-          void updateFileProgress(record.file_id, {
-            bytes_uploaded: bytesUploaded,
-            status: 'uploading',
-          });
+          const now = new Date().toISOString();
+          void updateUpload(record.id, {bytes_uploaded: bytesUploaded, updated_at: now});
+          void updateFileProgress(record.file_id, {bytes_uploaded: bytesUploaded, status: 'uploading'});
           patchUploadInStore(record.id, {bytes_uploaded: bytesUploaded});
         },
         onSuccess: async () => {
           this.active.delete(record.id);
-          await updateUpload(record.id, {
-            status: 'completed',
-            updated_at: new Date().toISOString(),
-          });
+          const now = new Date().toISOString();
+          await updateUpload(record.id, {status: 'completed', updated_at: now});
           patchUploadInStore(record.id, {status: 'completed'});
         },
         onError: async (error) => {
           this.active.delete(record.id);
-          await updateUpload(record.id, {
-            status: 'failed',
-            error: error.message,
-            updated_at: new Date().toISOString(),
-          });
+          const now = new Date().toISOString();
+          await updateUpload(record.id, {status: 'failed', error: error.message, updated_at: now});
           await failFile(record.file_id, error.message);
           patchUploadInStore(record.id, {status: 'failed', error: error.message});
         },
@@ -334,7 +306,6 @@ class UploadManager {
 
 export async function requestUploadNotificationPermission(): Promise<void> {
   if (Platform.OS !== 'android' || Platform.Version < 33) return;
-
   try {
     await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
   } catch {

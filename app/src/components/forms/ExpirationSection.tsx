@@ -19,7 +19,9 @@ export function ExpirationSection({
   return (
     <View className="gap-2">
       {value == null ? (
-        <Button variant="secondary" onPress={() => onChange(defaultExpirationAt())}>
+        <Button
+          variant="secondary"
+          onPress={() => onChange(defaultExpirationAt())}>
           Set expiration
         </Button>
       ) : (
@@ -32,7 +34,9 @@ export function ExpirationSection({
       )}
       <Muted>{helperText}</Muted>
       {value ? (
-        <Button variant="secondary" onPress={() => onChange(null)}>
+        <Button
+          variant="secondary"
+          onPress={() => onChange(null)}>
           Clear expiration
         </Button>
       ) : null}

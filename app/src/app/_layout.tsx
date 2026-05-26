@@ -1,10 +1,10 @@
 import '../../crypto';
 import '@/global.css';
-import {useEffect, useState} from 'react';
-import {Platform} from 'react-native';
+
 import {Slot} from 'expo-router';
-import {UiProvider} from '@workspace/ui';
+import {useEffect, useState} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {CloudUploader} from 'react-native-nitro-cloud-uploader';
 import {
   useFonts,
   Geist_400Regular,
@@ -12,53 +12,41 @@ import {
   Geist_600SemiBold,
   Geist_700Bold,
 } from '@expo-google-fonts/geist';
-import {initSupabase} from '@/lib/supabase';
+
+import {UiProvider} from '@workspace/ui';
 import {initLocalDb} from '@/lib/db/local';
+import {initSupabase} from '@/lib/supabase';
 import {uploadManager} from '@/lib/storage/manager';
 
 export default function RootLayout() {
+  const [booted, setBooted] = useState(false);
   const [fontsLoaded] = useFonts({
     Geist_400Regular,
     Geist_500Medium,
     Geist_600SemiBold,
     Geist_700Bold,
   });
-  const [booted, setBooted] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-
     async function boot() {
       await initLocalDb();
       await initSupabase();
       await uploadManager.init();
-
-      if (Platform.OS !== 'web') {
-        try {
-          const {CloudUploader} = await import('react-native-nitro-cloud-uploader');
-          CloudUploader.addListener('upload-progress', () => {
-            // keep JS bridge warm for background upload events
-          });
-        } catch (error) {
-          console.warn('CloudUploader unavailable in this build', error);
-        }
-      }
-
+      // Keep JS bridge warm for background upload events
+      CloudUploader.addListener('upload-progress', () => {});
       if (!cancelled) setBooted(true);
     }
-
     void boot();
-    return () => {
-      cancelled = true;
-    };
+    return () => {cancelled = true};
   }, []);
 
   if (!fontsLoaded || !booted) return null;
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{flex:1}}>
       <UiProvider>
-        <Slot />
+        <Slot/>
       </UiProvider>
     </GestureHandlerRootView>
   );

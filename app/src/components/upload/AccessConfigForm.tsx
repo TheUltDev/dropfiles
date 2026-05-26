@@ -1,11 +1,12 @@
-import type {AccessConfig, AccessMode, HashAlgo} from '@/lib/access';
+import type {AccessConfig, HashAlgo} from '@/lib/access';
+
 import {View} from 'react-native';
-import {AccessModeSection} from '@/components/forms/AccessModeSection';
-import {AllowedMimeSection} from '@/components/forms/AllowedMimeSection';
-import {ExpirationSection} from '@/components/forms/ExpirationSection';
 import {HashAlgoSection} from '@/components/forms/HashAlgoSection';
 import {MaxBytesSection} from '@/components/forms/MaxBytesSection';
 import {MaxFilesSection} from '@/components/forms/MaxFilesSection';
+import {ExpirationSection} from '@/components/forms/ExpirationSection';
+import {AccessModeSection} from '@/components/forms/AccessModeSection';
+import {AllowedMimeSection} from '@/components/forms/AllowedMimeSection';
 
 type Props = {
   value: AccessConfig;
@@ -17,26 +18,23 @@ export function AccessConfigForm({value, onChange}: Props) {
     <View className="gap-5">
       <View className="gap-2">
         <AccessModeSection
-          accessMode={value.accessMode}
           password={value.password}
+          accessMode={value.accessMode}
           allowedEmails={value.allowedEmails}
-          onAccessModeChange={(accessMode) => onChange({...value, accessMode})}
           onPasswordChange={(password) => onChange({...value, password})}
+          onAccessModeChange={(accessMode) => onChange({...value, accessMode})}
           onAllowedEmailsChange={(allowedEmails) => onChange({...value, allowedEmails})}
         />
       </View>
-
       <ExpirationSection
         value={value.expiresAt ?? null}
         onChange={(expiresAt) => onChange({...value, expiresAt})}
       />
-
       <MaxFilesSection
         value={value.maxFiles}
         maxValue={100}
         onChange={(maxFiles) => onChange({...value, maxFiles})}
       />
-
       <MaxBytesSection
         valueMb={value.maxBytes != null ? Math.round(value.maxBytes / (1024 * 1024)) : undefined}
         onChangeMb={(mb) =>
@@ -46,12 +44,10 @@ export function AccessConfigForm({value, onChange}: Props) {
           })
         }
       />
-
       <AllowedMimeSection
         value={value.allowedMime}
         onChange={(allowedMime) => onChange({...value, allowedMime})}
       />
-
       <HashAlgoSection
         value={value.hashAlgo}
         onChange={(hashAlgo: HashAlgo) => onChange({...value, hashAlgo})}

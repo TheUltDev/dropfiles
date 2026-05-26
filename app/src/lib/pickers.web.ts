@@ -10,51 +10,6 @@ export type PickedFile = {
   blob?: Blob;
 };
 
-function inferMime(name: string, fallback?: string): string {
-  if (fallback) return fallback;
-  const ext = name.split('.').pop()?.toLowerCase();
-  switch (ext) {
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg';
-    case 'png':
-      return 'image/png';
-    case 'gif':
-      return 'image/gif';
-    case 'webp':
-      return 'image/webp';
-    case 'mp4':
-      return 'video/mp4';
-    case 'mov':
-      return 'video/quicktime';
-    case 'pdf':
-      return 'application/pdf';
-    case 'zip':
-      return 'application/zip';
-    default:
-      return 'application/octet-stream';
-  }
-}
-
-async function normalizeFile(file: File): Promise<PickedFile | null> {
-  const settings = await loadSettings();
-  const mime = inferMime(file.name, file.type);
-  if (!isMimeAllowed(mime, settings)) return null;
-
-  const id = crypto.randomUUID();
-  const objectUrl = URL.createObjectURL(file);
-
-  return {
-    id,
-    name: file.name,
-    size: file.size,
-    mime,
-    uri: objectUrl,
-    stagedUri: objectUrl,
-    blob: file,
-  };
-}
-
 export async function pickFromFileList(fileList: FileList | File[]): Promise<PickedFile[]> {
   const files = Array.from(fileList);
   const picked: PickedFile[] = [];
@@ -99,4 +54,49 @@ export function formatBytes(bytes: number): string {
 
 export function stripFileScheme(uri: string): string {
   return uri;
+}
+
+async function normalizeFile(file: File): Promise<PickedFile | null> {
+  const settings = await loadSettings();
+  const mime = inferMime(file.name, file.type);
+  if (!isMimeAllowed(mime, settings)) return null;
+  
+  const id = crypto.randomUUID();
+  const objectUrl = URL.createObjectURL(file);
+  
+  return {
+    id,
+    name: file.name,
+    size: file.size,
+    mime,
+    uri: objectUrl,
+    stagedUri: objectUrl,
+    blob: file,
+  };
+}
+
+function inferMime(name: string, fallback?: string): string {
+  if (fallback) return fallback;
+  const ext = name.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+    case 'webp':
+      return 'image/webp';
+    case 'mp4':
+      return 'video/mp4';
+    case 'mov':
+      return 'video/quicktime';
+    case 'pdf':
+      return 'application/pdf';
+    case 'zip':
+      return 'application/zip';
+    default:
+      return 'application/octet-stream';
+  }
 }

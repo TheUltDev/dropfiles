@@ -1,14 +1,8 @@
-import {Platform} from 'react-native';
 import type {AccessMode} from '@/lib/access';
+import type {SelectOption} from '@workspace/ui';
+import {Platform} from 'react-native';
 import {ACCESS_MODE_LABELS, parseEmailList} from '@/lib/access';
-import {
-  Description,
-  Input,
-  Label,
-  Select,
-  TextField,
-  type SelectOption,
-} from '@workspace/ui';
+import {Description, Input, Label, Select, TextField} from '@workspace/ui';
 
 type Props = {
   label?: string;

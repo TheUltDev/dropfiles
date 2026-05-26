@@ -1,50 +1,19 @@
 import type {AccessConfig} from '@/lib/access';
 import {
-  bucketName,
-  getOwnerTokenSync,
-  getSupabase,
-  getSupabaseAnonKey,
-  uploadsFunctionUrl,
   type ClaimBlobResult,
   type DatabaseDrop,
   type DatabaseFile,
   type DropWithFiles,
   type RecipientDrop,
+  bucketName,
+  getSupabase,
+  getOwnerTokenSync,
+  getSupabaseAnonKey,
+  uploadsFunctionUrl,
 } from '@/lib/supabase';
 
 export function buildStoragePath(hash: string): string {
   return `blobs/${hash}`;
-}
-
-async function callUploadFunction<T>(
-  route: 'create' | 'complete' | 'abort' | 'single',
-  body: Record<string, unknown>,
-): Promise<T> {
-  if (!uploadsFunctionUrl) {
-    throw new Error('Missing EXPO_PUBLIC_UPLOADS_FUNCTION_URL');
-  }
-
-  const ownerToken = getOwnerTokenSync();
-  const response = await fetch(`${uploadsFunctionUrl}/${route}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getSupabaseAnonKey()}`,
-      apikey: getSupabaseAnonKey(),
-      ...(ownerToken ? {'x-owner-token': ownerToken} : {}),
-    },
-    body: JSON.stringify({ownerToken, ...body}),
-  });
-
-  const payload = (await response.json()) as {error?: string; message?: string};
-  if (!response.ok) {
-    throw new Error(
-      payload.error ??
-        payload.message ??
-        `Upload function failed (${response.status})`,
-    );
-  }
-  return payload as T;
 }
 
 export async function createDrop(access: AccessConfig): Promise<DatabaseDrop> {
@@ -295,4 +264,35 @@ export async function createSignedDownload(
   if (signError) throw signError;
   if (!signed?.signedUrl) throw new Error('Failed to create signed URL');
   return signed.signedUrl;
+}
+
+async function callUploadFunction<T>(
+  route: 'create' | 'complete' | 'abort' | 'single',
+  body: Record<string, unknown>,
+): Promise<T> {
+  if (!uploadsFunctionUrl) {
+    throw new Error('Missing EXPO_PUBLIC_UPLOADS_FUNCTION_URL');
+  }
+
+  const ownerToken = getOwnerTokenSync();
+  const response = await fetch(`${uploadsFunctionUrl}/${route}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getSupabaseAnonKey()}`,
+      apikey: getSupabaseAnonKey(),
+      ...(ownerToken ? {'x-owner-token': ownerToken} : {}),
+    },
+    body: JSON.stringify({ownerToken, ...body}),
+  });
+
+  const payload = (await response.json()) as {error?: string; message?: string};
+  if (!response.ok) {
+    throw new Error(
+      payload.error ??
+        payload.message ??
+        `Upload function failed (${response.status})`,
+    );
+  }
+  return payload as T;
 }

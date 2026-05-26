@@ -1,5 +1,5 @@
 import {View} from 'react-native';
-import {Body, Muted, Small} from '@/components/base/text';
+import {Small} from '@/components/base/text';
 
 type Props = {
   steps: string[];
@@ -14,9 +14,7 @@ export function DropWizardStepper({steps, currentStep}: Props) {
         const done = index < currentStep;
         return (
           <View key={step} className="flex-1 gap-2">
-            <View
-              className={`h-1 rounded-full ${done || active ? 'bg-accent' : 'bg-default'}`}
-            />
+            <View className={`h-1 rounded-full ${done || active ? 'bg-accent' : 'bg-default'}`}/>
             <Small className={active ? 'text-foreground' : 'text-muted'}>{step}</Small>
           </View>
         );

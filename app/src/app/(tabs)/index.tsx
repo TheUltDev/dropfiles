@@ -1,10 +1,11 @@
+import type {Href} from 'expo-router';
 import {useEffect, useState} from 'react';
 import {ScrollView, View} from 'react-native';
-import {useRouter, type Href} from 'expo-router';
+import {useRouter} from 'expo-router';
 import {Button} from '@workspace/ui';
-import {Title, Subtitle, Body, Muted, Small} from '@/components/base/text';
-import {useActiveUploads} from '@/lib/storage/store';
 import {formatBytes} from '@/lib/pickers';
+import {useActiveUploads} from '@/lib/storage/store';
+import {Title, Subtitle, Body, Muted, Small} from '@/components/base/text';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -22,21 +23,27 @@ export default function HomeScreen() {
         contentContainerClassName="max-w-[800px] gap-6 px-6 pt-safe pb-safe-offset-8 self-center w-full">
         <View className="gap-2 pt-4">
           <Title>Dropfiles</Title>
-          <Subtitle className="text-muted">Send large files with resume and deduplication</Subtitle>
+          <Subtitle className="text-muted">
+            Send large files with resume and deduplication
+          </Subtitle>
         </View>
-
         <View className="gap-4 rounded-3xl bg-surface-secondary p-6">
-          <Body className="font-semibold">Start a new drop</Body>
+          <Body className="font-semibold">
+            Start a new drop
+          </Body>
           <Muted>
             Pick files, set access rules, and share a link. Uploads resume automatically on web
             and in the background on mobile.
           </Muted>
-          <Button onPress={() => router.push('/(drop)/new' as Href)}>New drop</Button>
+          <Button onPress={() => router.push('/(drop)/new' as Href)}>
+            New drop
+          </Button>
         </View>
-
         {ready && activeUploads.length > 0 ? (
           <View className="gap-3">
-            <Body className="font-semibold">In progress</Body>
+            <Body className="font-semibold">
+              In progress
+            </Body>
             {activeUploads.map((upload) => (
               <View
                 key={upload.id}

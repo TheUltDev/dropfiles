@@ -1,5 +1,5 @@
-import * as SecureStore from 'expo-secure-store';
 import type {AccessConfig, AccessMode, HashAlgo} from '@/lib/access';
+import * as SecureStore from 'expo-secure-store';
 import {defaultExpirationAt} from '@/lib/expiration';
 
 export type AppSettings = {
@@ -13,9 +13,7 @@ export type AppSettings = {
   wifiOnly: boolean;
 };
 
-function defaultExpirationAtValue(): string {
-  return defaultExpirationAt();
-}
+const SETTINGS_KEY = 'dropfiles_settings';
 
 export const DEFAULT_SETTINGS: AppSettings = {
   defaultAccessMode: 'link',
@@ -27,23 +25,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
   blockedMime: [],
   wifiOnly: false,
 };
-
-const SETTINGS_KEY = 'dropfiles_settings';
-
-function normalizeSettings(raw: Record<string, unknown>): AppSettings {
-  const settings = {...DEFAULT_SETTINGS, ...raw} as AppSettings & {
-    defaultExpirationDays?: number | null;
-  };
-
-  if (settings.defaultExpirationAt == null && settings.defaultExpirationDays != null) {
-    settings.defaultExpirationAt = new Date(
-      Date.now() + settings.defaultExpirationDays * 86400000,
-    ).toISOString();
-  }
-
-  delete settings.defaultExpirationDays;
-  return settings;
-}
 
 export async function loadSettings(): Promise<AppSettings> {
   const raw = await SecureStore.getItemAsync(SETTINGS_KEY);
@@ -81,9 +62,28 @@ export function isMimeAllowed(
   return settings.allowedMime.some((pattern) => mimeMatches(mime, pattern));
 }
 
+function normalizeSettings(raw: Record<string, unknown>): AppSettings {
+  const settings = {...DEFAULT_SETTINGS, ...raw} as AppSettings & {
+    defaultExpirationDays?: number | null;
+  };
+
+  if (settings.defaultExpirationAt == null && settings.defaultExpirationDays != null) {
+    settings.defaultExpirationAt = new Date(
+      Date.now() + settings.defaultExpirationDays * 86400000,
+    ).toISOString();
+  }
+
+  delete settings.defaultExpirationDays;
+  return settings;
+}
+
 function mimeMatches(mime: string, pattern: string): boolean {
   if (pattern.endsWith('/*')) {
     return mime.startsWith(pattern.slice(0, -1));
   }
   return mime === pattern;
+}
+
+function defaultExpirationAtValue(): string {
+  return defaultExpirationAt();
 }

@@ -1,5 +1,5 @@
-import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import {Directory, File, Paths} from 'expo-file-system';
 import {isMimeAllowed, loadSettings} from '@/lib/settings';
 
@@ -11,79 +11,6 @@ export type PickedFile = {
   uri: string;
   stagedUri: string;
 };
-
-async function ensureStagingDir(): Promise<Directory> {
-  const dir = new Directory(Paths.document, 'staging');
-  if (!dir.exists) {
-    dir.create({intermediates: true});
-  }
-  return dir;
-}
-
-async function stageFile(sourceUri: string, fileId: string, name: string): Promise<string> {
-  const staging = await ensureStagingDir();
-  const safeName = name.replace(/[/\\]/g, '_');
-  const dest = new File(staging, `${fileId}-${safeName}`);
-  const source = new File(sourceUri);
-  if (dest.exists) {
-    dest.delete();
-  }
-  source.copy(dest);
-  return dest.uri;
-}
-
-function inferMime(name: string, fallback?: string | null): string {
-  if (fallback) return fallback;
-  const ext = name.split('.').pop()?.toLowerCase();
-  switch (ext) {
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg';
-    case 'png':
-      return 'image/png';
-    case 'gif':
-      return 'image/gif';
-    case 'webp':
-      return 'image/webp';
-    case 'mp4':
-      return 'video/mp4';
-    case 'mov':
-      return 'video/quicktime';
-    case 'pdf':
-      return 'application/pdf';
-    case 'zip':
-      return 'application/zip';
-    default:
-      return 'application/octet-stream';
-  }
-}
-
-async function normalizeAsset(input: {
-  uri: string;
-  name: string;
-  size?: number | null;
-  mime?: string | null;
-}): Promise<PickedFile | null> {
-  const settings = await loadSettings();
-  const mime = inferMime(input.name, input.mime);
-  if (!isMimeAllowed(mime, settings)) {
-    return null;
-  }
-
-  const fileId = crypto.randomUUID();
-  const source = new File(input.uri);
-  const size = input.size ?? source.size ?? 0;
-  const stagedUri = await stageFile(input.uri, fileId, input.name);
-
-  return {
-    id: fileId,
-    name: input.name,
-    size,
-    mime,
-    uri: input.uri,
-    stagedUri,
-  };
-}
 
 export async function pickDocuments(): Promise<PickedFile[]> {
   const result = await DocumentPicker.getDocumentAsync({
@@ -144,4 +71,77 @@ export function formatBytes(bytes: number): string {
 
 export function stripFileScheme(uri: string): string {
   return uri.replace(/^file:\/\//, '');
+}
+
+async function ensureStagingDir(): Promise<Directory> {
+  const dir = new Directory(Paths.document, 'staging');
+  if (!dir.exists) {
+    dir.create({intermediates: true});
+  }
+  return dir;
+}
+
+async function stageFile(sourceUri: string, fileId: string, name: string): Promise<string> {
+  const staging = await ensureStagingDir();
+  const safeName = name.replace(/[/\\]/g, '_');
+  const dest = new File(staging, `${fileId}-${safeName}`);
+  const source = new File(sourceUri);
+  if (dest.exists) {
+    dest.delete();
+  }
+  source.copy(dest);
+  return dest.uri;
+}
+
+async function normalizeAsset(input: {
+  uri: string;
+  name: string;
+  size?: number | null;
+  mime?: string | null;
+}): Promise<PickedFile | null> {
+  const settings = await loadSettings();
+  const mime = inferMime(input.name, input.mime);
+  if (!isMimeAllowed(mime, settings)) {
+    return null;
+  }
+  
+  const fileId = crypto.randomUUID();
+  const source = new File(input.uri);
+  const size = input.size ?? source.size ?? 0;
+  const stagedUri = await stageFile(input.uri, fileId, input.name);
+  
+  return {
+    id: fileId,
+    name: input.name,
+    size,
+    mime,
+    uri: input.uri,
+    stagedUri,
+  };
+}
+
+function inferMime(name: string, fallback?: string | null): string {
+  if (fallback) return fallback;
+  const ext = name.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+    case 'webp':
+      return 'image/webp';
+    case 'mp4':
+      return 'video/mp4';
+    case 'mov':
+      return 'video/quicktime';
+    case 'pdf':
+      return 'application/pdf';
+    case 'zip':
+      return 'application/zip';
+    default:
+      return 'application/octet-stream';
+  }
 }
