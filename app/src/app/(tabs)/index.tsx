@@ -38,6 +38,9 @@ export default function HomeScreen() {
           <Button onPress={() => router.push('/(drop)/new' as Href)}>
             New drop
           </Button>
+          <Button variant="secondary" onPress={() => router.push('/test' as Href)}>
+            Test route
+          </Button>
         </View>
         {ready && activeUploads.length > 0 ? (
           <View className="gap-3">

@@ -1,0 +1,173 @@
+/**
+ * HeroUI semantic theme (shared with app global.css).
+ * Primitives + @layer theme variants + runtime @theme color bridge for uniwind utilities.
+ */
+
+@theme {
+  /* Primitives (match heroui-native variables.css) */
+  --white: oklch(100% 0 0);
+  --black: oklch(0% 0 0);
+  --snow: oklch(0.9911 0 0);
+  --eclipse: oklch(0.2103 0.0059 285.89);
+}
+
+@theme inline static {
+  /* Runtime-linked Tailwind colors (text-segment-foreground, bg-segment, etc.) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-secondary-foreground: var(--surface-secondary-foreground);
+  --color-surface-tertiary: var(--surface-tertiary);
+  --color-surface-tertiary-foreground: var(--surface-tertiary-foreground);
+  --color-overlay: var(--overlay);
+  --color-overlay-foreground: var(--overlay-foreground);
+  --color-backdrop: var(--backdrop);
+  --color-muted: var(--muted);
+  --color-default: var(--default);
+  --color-default-foreground: var(--default-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-segment: var(--segment);
+  --color-segment-foreground: var(--segment-foreground);
+  --color-border: var(--border);
+  --color-separator: var(--separator);
+  --color-focus: var(--focus);
+  --color-link: var(--link);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-field: var(--field-background, var(--default));
+  --color-field-foreground: var(--field-foreground, var(--foreground));
+  --color-field-placeholder: var(--field-placeholder, var(--muted));
+  --color-field-border: var(--field-border, var(--border));
+}
+
+@layer theme {
+  :root {
+    /*
+     * Glass theme — light.
+     * Ported from `@heroui-pro/react/themes/glass` so the same semantic tokens
+     * drive heroui-native (RN) and @heroui/react (web). Web-only `oklch(from …)`
+     * / `color-mix()` values are resolved to concrete colors here so uniwind/RN
+     * can parse them. The frosted blur itself is web-only (backdrop-filter, see
+     * styles.web.ts); native blur is opt-in via the GlassSurface primitive.
+     */
+    @variant light {
+      color-scheme: light;
+
+      --background: oklch(97% 0.0029 264.54);
+      --foreground: var(--eclipse);
+
+      --surface: oklch(100% 0 0 / 0.8);
+      --surface-foreground: var(--foreground);
+      --surface-secondary: oklch(96% 0.002 286 / 0.5);
+      --surface-secondary-foreground: var(--foreground);
+      --surface-tertiary: oklch(96% 0.002 286 / 0.7);
+      --surface-tertiary-foreground: var(--foreground);
+
+      --overlay: oklch(100% 0 0 / 0.75);
+      --overlay-foreground: var(--foreground);
+      --backdrop: oklch(77.21% 0.0036 247.87 / 0.6);
+
+      --muted: oklch(55.17% 0.006 253.83);
+
+      --default: oklch(0% 0 0 / 0.07);
+      --default-foreground: var(--eclipse);
+
+      --accent: oklch(30% 0.006 240);
+      --accent-foreground: var(--snow);
+
+      --field-background: oklch(14% 0.05 255 / 0.06);
+      --field-foreground: var(--eclipse);
+      --field-placeholder: var(--muted);
+      --field-border: oklch(0% 0 0 / 0.04);
+
+      --success: oklch(0.7329 0.1935 150.81);
+      --success-foreground: var(--eclipse);
+
+      --warning: oklch(0.7819 0.1585 72.33);
+      --warning-foreground: var(--eclipse);
+
+      --danger: oklch(0.577 0.245 27.325);
+      --danger-foreground: var(--snow);
+
+      /* Tab indicator pill vs page background */
+      --segment: var(--white);
+      --segment-foreground: var(--eclipse);
+
+      --border: oklch(90% 0.003 253.83);
+      --separator: oklch(0% 0 0 / 0.1);
+      --scrollbar: oklch(87.1% 0.003 253.83);
+      --focus: var(--accent);
+      --link: var(--accent);
+
+      --glass-blur: 20px;
+
+      --surface-shadow: 0 0 0 0 transparent;
+      --overlay-shadow:
+        0 2px 8px 0 rgba(0, 0, 0, 0.06), 0 -6px 12px 0 rgba(0, 0, 0, 0.03),
+        0 14px 28px 0 rgba(0, 0, 0, 0.08);
+      --field-shadow: 0 0 0 0 transparent;
+    }
+
+    @variant dark {
+      color-scheme: dark;
+
+      --background: oklch(15% 0.003 240);
+      --foreground: var(--snow);
+
+      --surface: oklch(100% 0 0 / 0.04);
+      --surface-foreground: var(--foreground);
+      --surface-secondary: oklch(100% 0 0 / 0.1);
+      --surface-secondary-foreground: oklch(25.7% 0 253.83);
+      --surface-tertiary: oklch(100% 0 0 / 0.2);
+      --surface-tertiary-foreground: oklch(27.21% 0 253.83);
+
+      --overlay: oklch(100% 0 0 / 0.05);
+      --overlay-foreground: var(--foreground);
+      --backdrop: oklch(0% 0 0 / 0.3);
+
+      --muted: oklch(70.5% 0.006 253.83);
+
+      --default: oklch(100% 0 0 / 0.08);
+      --default-foreground: var(--snow);
+
+      --accent: oklch(98% 0.001 240);
+      --accent-foreground: var(--eclipse);
+
+      --field-background: oklch(100% 0 0 / 0.08);
+      --field-foreground: var(--foreground);
+      --field-placeholder: oklch(70.5% 0 253.83);
+      --field-border: oklch(100% 0 0 / 0.04);
+
+      --success: oklch(0.7329 0.1935 150.81);
+      --success-foreground: var(--eclipse);
+
+      --warning: oklch(0.8203 0.1388 76.34);
+      --warning-foreground: var(--eclipse);
+
+      --danger: oklch(0.704 0.191 22.216);
+      --danger-foreground: var(--snow);
+
+      --segment: oklch(39.64% 0.003 253.83);
+      --segment-foreground: var(--foreground);
+
+      --border: oklch(28% 0.003 253.83);
+      --separator: oklch(100% 0 0 / 0.12);
+      --scrollbar: oklch(70.5% 0.003 253.83);
+      --focus: var(--accent);
+      --link: var(--accent);
+
+      --glass-blur: 36px;
+
+      --surface-shadow: 0 0 0 0 transparent inset;
+      --overlay-shadow: 0 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+      --field-shadow: 0 0 0 0 transparent inset;
+    }
+  }
+}

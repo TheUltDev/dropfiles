@@ -1,6 +1,6 @@
 import {View} from 'react-native';
 import {Muted} from '@/components/base/text';
-import {Button, DateTimeField} from '@workspace/ui';
+import {Button, CellDateTime} from '@workspace/ui';
 import {defaultExpirationAt} from '@/lib/expiration';
 
 type Props = {
@@ -25,12 +25,20 @@ export function ExpirationSection({
           Set expiration
         </Button>
       ) : (
-        <DateTimeField
-          label={label}
+        <CellDateTime
           value={value}
           minimumDate={new Date()}
           onChange={onChange}
-        />
+          aria-label={label}>
+          <CellDateTime.Trigger>
+            <CellDateTime.Label>{label}</CellDateTime.Label>
+            <CellDateTime.Value />
+            <CellDateTime.Indicator />
+          </CellDateTime.Trigger>
+          <CellDateTime.Popover>
+            <CellDateTime.Wheel />
+          </CellDateTime.Popover>
+        </CellDateTime>
       )}
       <Muted>{helperText}</Muted>
       {value ? (

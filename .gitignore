@@ -1,4 +1,5 @@
 # Dependencies
+app/public/canvaskit.wasm
 node_modules
 android/
 .pnp

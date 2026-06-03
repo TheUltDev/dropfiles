@@ -24,6 +24,7 @@ import {
   buildStoragePath,
   updateFileProgress,
 } from '@/lib/db/remote';
+import {startUpload, type UploadHandlers} from '@/lib/storage/uploader';
 
 type ActiveController = {
   pause: () => void | Promise<void>;
@@ -215,9 +216,8 @@ class UploadManager {
     patchUploadInStore(record.id, {status: 'uploading'});
 
     if (Platform.OS === 'web') {
-      const {startWebUpload} = await import('@/lib/storage/uploader.web');
       const fingerprint = `${record.drop_id}:${record.file_id}:${record.storage_path}`;
-      const controller = await startWebUpload(
+      const controller = await startUpload(
         {
           uri: record.uri,
           name: record.name,
@@ -227,7 +227,7 @@ class UploadManager {
           fingerprint,
         },
         {
-          onProgress: (bytesUploaded) => {
+          onProgress: (bytesUploaded: number) => {
             const now = new Date().toISOString();
             void updateUpload(record.id, {bytes_uploaded: bytesUploaded, updated_at: now});
             void updateFileProgress(record.file_id, {bytes_uploaded: bytesUploaded, status: 'uploading'});
@@ -249,14 +249,14 @@ class UploadManager {
             await updateUpload(record.id, {status: 'completed', updated_at: now});
             patchUploadInStore(record.id, {status: 'completed'});
           },
-          onError: async (error) => {
+          onError: async (error: Error) => {
             this.active.delete(record.id);
             const now = new Date().toISOString();
             await updateUpload(record.id, {status: 'failed', error: error.message, updated_at: now});
             await failFile(record.file_id, error.message);
             patchUploadInStore(record.id, {status: 'failed', error: error.message});
           },
-        },
+        } satisfies UploadHandlers,
       );
       this.active.set(record.id, controller);
       return;
@@ -266,8 +266,7 @@ class UploadManager {
       throw new Error('Native uploads require BLAKE3 hash');
     }
 
-    const {startNativeUpload} = await import('@/lib/storage/uploader.native');
-    const controller = await startNativeUpload(
+    const controller = await startUpload(
       {
         localId: record.id,
         fileId: record.file_id,
@@ -278,7 +277,7 @@ class UploadManager {
         hash: record.hash,
       },
       {
-        onProgress: (bytesUploaded) => {
+        onProgress: (bytesUploaded: number) => {
           const now = new Date().toISOString();
           void updateUpload(record.id, {bytes_uploaded: bytesUploaded, updated_at: now});
           void updateFileProgress(record.file_id, {bytes_uploaded: bytesUploaded, status: 'uploading'});
@@ -290,14 +289,14 @@ class UploadManager {
           await updateUpload(record.id, {status: 'completed', updated_at: now});
           patchUploadInStore(record.id, {status: 'completed'});
         },
-        onError: async (error) => {
+        onError: async (error: Error) => {
           this.active.delete(record.id);
           const now = new Date().toISOString();
           await updateUpload(record.id, {status: 'failed', error: error.message, updated_at: now});
           await failFile(record.file_id, error.message);
           patchUploadInStore(record.id, {status: 'failed', error: error.message});
         },
-      },
+      } satisfies UploadHandlers,
     );
 
     this.active.set(record.id, controller);

@@ -1,5 +1,5 @@
 import type {AccessConfig, AccessMode, HashAlgo} from '@/lib/access';
-import {defaultExpirationAt} from '@/lib/expiration';
+import {SETTINGS_KEY, DEFAULT_SETTINGS} from '@/lib/settings.cfg';
 
 export type AppSettings = {
   defaultAccessMode: AccessMode;
@@ -10,19 +10,6 @@ export type AppSettings = {
   allowedMime: string[];
   blockedMime: string[];
   wifiOnly: boolean;
-};
-
-const SETTINGS_KEY = 'dropfiles_settings';
-
-export const DEFAULT_SETTINGS: AppSettings = {
-  defaultAccessMode: 'link',
-  defaultExpirationAt: defaultExpirationAt(),
-  defaultMaxBytes: 5 * 1024 * 1024 * 1024,
-  defaultMaxFiles: 10,
-  defaultHashAlgo: 'blake3',
-  allowedMime: [],
-  blockedMime: [],
-  wifiOnly: false,
 };
 
 export async function loadSettings(): Promise<AppSettings> {

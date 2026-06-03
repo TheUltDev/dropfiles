@@ -38,7 +38,7 @@ function normalizeEtag(etag: string, index: number): {partNumber: number; etag: 
   return {partNumber: index + 1, etag: cleaned};
 }
 
-export async function startNativeUpload(
+export async function startUpload(
   target: NativeUploadTarget,
   handlers: NativeUploadHandlers = {},
 ): Promise<NativeUploadController> {

@@ -2,34 +2,76 @@
   "name": "@workspace/ui",
   "version": "0.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "type": "module",
+  "main": "./dist/native/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "development": {
+        "react-native": "./src/index.ts",
+        "browser": "./src/index.ts",
+        "default": "./src/index.ts"
+      },
+      "react-native": "./dist/native/index.js",
+      "browser": "./dist/web/index.js",
+      "default": "./dist/native/index.js"
+    },
+    "./theme.css": "./src/theme.css"
+  },
   "scripts": {
-    "lint": "bun run scripts/check-boundary.ts",
+    "build": "rolldown -c && bun run build:types",
+    "build:native": "rolldown -c",
+    "build:types": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@heroui-pro/react": "1.0.0-beta.4",
-    "@heroui/react": "^3.0.5",
+    "@internationalized/date": "^3.8.2",
     "@number-flow/react": "^0.6.0",
-    "heroui-native": "^1.0.3",
-    "heroui-native-pro": "1.0.0-beta.3",
     "motion": "^12.40.0",
     "tailwind-merge": "^3.5.0"
   },
   "peerDependencies": {
     "@expo/ui": "*",
+    "@heroui-pro/react": "1.0.0-beta.5",
+    "@heroui/react": "^3.1.0",
+    "heroui-native": "^1.0.4",
+    "heroui-native-pro": "1.0.0-beta.4",
     "react": ">=19",
+    "react-dom": ">=19",
     "react-native": "*",
     "react-native-web": "*"
   },
   "peerDependenciesMeta": {
     "@expo/ui": {
       "optional": true
+    },
+    "@heroui-pro/react": {
+      "optional": true
+    },
+    "@heroui/react": {
+      "optional": true
+    },
+    "heroui-native": {
+      "optional": true
+    },
+    "heroui-native-pro": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-native-web": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@heroui-pro/react": "1.0.0-beta.5",
+    "@heroui/react": "^3.1.0",
     "@types/react": "catalog:",
+    "heroui-native": "^1.0.4",
+    "heroui-native-pro": "1.0.0-beta.4",
+    "rolldown": "^1.1.0",
     "typescript": "catalog:"
   }
 }

@@ -28,7 +28,7 @@ export type WebUploadController = {
   cancel: () => void;
 };
 
-export async function startWebUpload(
+export async function startUpload(
   target: UploadTarget,
   handlers: UploadHandlers = {},
 ): Promise<WebUploadController> {

@@ -16,6 +16,7 @@
     "node": ">=20"
   },
   "trustedDependencies": [
+    "@shopify/react-native-skia",
     "heroui-native-pro",
     "@heroui-pro/react",
     "@zowe/secrets-for-zowe-sdk"

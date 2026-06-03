@@ -1,6 +1,6 @@
 import type {AccessConfig, AccessMode, HashAlgo} from '@/lib/access';
-import * as SecureStore from 'expo-secure-store';
-import {defaultExpirationAt} from '@/lib/expiration';
+import {getItemAsync, setItemAsync} from 'expo-secure-store';
+import {SETTINGS_KEY, DEFAULT_SETTINGS} from '@/lib/settings.cfg';
 
 export type AppSettings = {
   defaultAccessMode: AccessMode;
@@ -13,21 +13,8 @@ export type AppSettings = {
   wifiOnly: boolean;
 };
 
-const SETTINGS_KEY = 'dropfiles_settings';
-
-export const DEFAULT_SETTINGS: AppSettings = {
-  defaultAccessMode: 'link',
-  defaultExpirationAt: defaultExpirationAtValue(),
-  defaultMaxBytes: 5 * 1024 * 1024 * 1024,
-  defaultMaxFiles: 10,
-  defaultHashAlgo: 'blake3',
-  allowedMime: [],
-  blockedMime: [],
-  wifiOnly: false,
-};
-
 export async function loadSettings(): Promise<AppSettings> {
-  const raw = await SecureStore.getItemAsync(SETTINGS_KEY);
+  const raw = await getItemAsync(SETTINGS_KEY);
   if (!raw) return {...DEFAULT_SETTINGS};
   try {
     return normalizeSettings(JSON.parse(raw) as Record<string, unknown>);
@@ -37,7 +24,7 @@ export async function loadSettings(): Promise<AppSettings> {
 }
 
 export async function saveSettings(settings: AppSettings): Promise<void> {
-  await SecureStore.setItemAsync(SETTINGS_KEY, JSON.stringify(settings));
+  await setItemAsync(SETTINGS_KEY, JSON.stringify(settings));
 }
 
 export function settingsToAccessDefaults(settings: AppSettings): Partial<AccessConfig> {
@@ -82,8 +69,4 @@ function mimeMatches(mime: string, pattern: string): boolean {
     return mime.startsWith(pattern.slice(0, -1));
   }
   return mime === pattern;
-}
-
-function defaultExpirationAtValue(): string {
-  return defaultExpirationAt();
 }
